@@ -160,7 +160,7 @@ const Mutation = new GraphQLObjectType({
     name: 'Mutation',
     fields: {
         addUser: {
-            type: creation_response,
+            type: UserType,
             args: {
                 user_type : { type: GraphQLString },
                 f_name    : { type: GraphQLString },
@@ -179,24 +179,8 @@ const Mutation = new GraphQLObjectType({
                     email       : args.email,
                     password    : args.password,
                 };
-                var resp = {
-                    status: "Test",
-                    message: "test"
-                };
-                User.createUser(newUser, (err, user) => {
-                    if(err){
-                        console.log("Error creating user: " + err);
-                        resp.status = "ERROR";
-                        resp.message ="Could not create new user";
-                    }
-                    else{
-                        console.log("User created: " + user);
-                        resp.status = "SUCCESS";
-                        resp.message = "Your profile is created. Please log in to continue!";
-                    }
-                });
-                console.log(resp);
-                return resp;
+                User.createUser(newUser);
+                return newUser;
             }
         },
 

@@ -37,7 +37,7 @@ var Users = mongoose.model('Users',userschema);
 module.exports = Users;
 
 //define create user
-module.exports.createUser = function(newUser, callback){
+module.exports.createUser = function(newUser){
     console.log("Inside model: user.js");
     var user_result;
     bcrypt.hash(newUser.password, saltRounds, function(err,hash){
@@ -49,7 +49,22 @@ module.exports.createUser = function(newUser, callback){
             console.log("Inside Bcrypt function");
             newUser.password = hash;
             //newUser.save(callback);
-            Users.create(newUser, callback);
+            return Users.create(newUser, (err, user) => {
+                if(err){
+                    console.log("Error in creating user: " + err);
+                    return {
+                        status: "ERROR",
+                        message: "Error creating user. All input fields are required"
+                    }
+                }
+                else{
+                    console.log("User created: " + user)
+                    return {
+                        status: "SUCCESS",
+                        message: "Your account is created. Please log in to continue"
+                    }
+                }
+            });
         }
     });
 };
