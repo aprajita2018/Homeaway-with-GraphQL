@@ -66,5 +66,5 @@ app.use("/graphql",graphqlHTTP({
 }));
 
 //start the server on port 3001
-app.listen(3001);
-console.log("Server listening on port # 3001");
+app.listen(8080);
+console.log("Server listening on port #8080");
