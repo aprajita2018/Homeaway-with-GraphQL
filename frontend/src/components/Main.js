@@ -11,7 +11,6 @@ import OwnerLogin from './OwnerLogin/ownerLogin';
 import OwnerSignUp from './OwnerSignUp/ownerSignUp';
 import POB from './POB/pob';
 import OwnerProperties from './OwnerProperties/OwnerProperties';
-import Inbox from './Inbox/inbox';
 
 const Main = () => (
     <BrowserRouter>
@@ -27,8 +26,6 @@ const Main = () => (
             <Route exact path = '/ownerSignUp' component={OwnerSignUp}/>
             <Route exact path = '/pob' component={POB}/>
             <Route exact path = '/OwnerProperties' component={OwnerProperties}/>
-            <Route exact path = '/inbox' component={Inbox}/>
-
         </Switch>
     </BrowserRouter>
 )

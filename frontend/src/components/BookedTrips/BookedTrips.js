@@ -1,25 +1,54 @@
 import React, {Component} from 'react';
-//import axios from 'axios';
-//import { Field, reduxForm, change} from "redux-form";
-import {connect} from "react-redux";
-import {fetchProperty} from "../../actions/property_action";
-
+import axios from 'axios';
 
 class BookedTrips extends Component{
-        constructor(props){
-            super(props);
-            this.state = {
-                isLoading: true,
-                photoURL: ""
-            }
-
-            this.props.fetchProperty(this.props.booking.property_id, (res) => {
-                this.setState({
-                    isLoading: false,
-                    ...res.property
-                })
-            })
+    constructor(props){
+        super(props);
+        
+        //initialize the state
+        this.state = {
+            id: this.props.booking_id,
+            isLoading: false,
+            photoURL: null,
         }
+    }
+    
+    componentDidMount(){
+        this.setState({
+            isLoading:true,
+        });
+
+        //fetching the booking details from the backend
+        axios.get('/bookingDetails', {
+            params: {
+                id: this.state.id
+            }
+        })
+        .then((res) =>{
+            console.log(res.data);
+            this.setState({
+                isLoading: false,
+            });
+            this.setState({
+                owner_id: res.data.owner_id,
+                pricePerNight: res.data.pricePerNight,
+                fromDate: res.data.fromDate.substring(0,10),
+                toDate: res.data.toDate.substring(0,10),
+                priceTotal: res.data.priceTotal,
+                photoURL: res.data.photoURL,
+                title: res.data.title,
+                description: res.data.description,
+                type: res.data.type,
+                numSleep: res.data.numSleep,
+                numBath: res.data.numBath,
+                numBed: res.data.numBed,
+                minStay: res.data.minStay,
+                streetAddress: res.data.streetAddress,
+                city: res.data.city,
+                state: res.data.state,
+            })
+        })
+    }
 
     render(){
         return(
@@ -37,8 +66,8 @@ class BookedTrips extends Component{
                         <h5 className="card-title font-weight-bold">{this.state.title}</h5>
                         <p className="card-text">{this.state.description}</p>
                         <p className="card-text">{this.state.streetAddress}. {this.state.city}, {this.state.state}</p>
-                        <p className="card-text font-weight-bold">Stay from {this.props.booking.fromDate.substring(0,10)} until {this.props.booking.toDate.substring(0,10)} </p>
-                        <p className="card-text font-weight-bold">You paid: ${this.props.booking.priceTotal}</p>
+                        <p className="card-text font-weight-bold">Stay from {this.state.fromDate} until {this.state.toDate} </p>
+                        <p className="card-text font-weight-bold">You paid: ${this.state.priceTotal}</p>
                         <p className="card-text">
                             <span className="col-2">
                                 <i className="fas fa-home" />
@@ -68,4 +97,4 @@ class BookedTrips extends Component{
     }
 }
 
-export default connect(null, {fetchProperty})(BookedTrips);
+export default BookedTrips;

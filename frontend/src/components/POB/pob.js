@@ -4,9 +4,6 @@ import './pob.css';
 import axios from 'axios';
 import {Redirect} from 'react-router-dom';
 import cookie from 'react-cookies';
-import {connect} from "react-redux";
-import {listProperty} from '../../actions/property_action';
-import {BACKEND_HOST} from '../../actions/host_config';
 
 class POB extends Component{
 
@@ -18,17 +15,12 @@ class POB extends Component{
             photoURL: [],
             photoUploadProgress: [],
         }
-
-        this.onChange = this.onChange.bind(this);
+        
         this.updateProgress = this.updateProgress.bind(this);
         this.handleListYourProperty = this.handleListYourProperty.bind(this);
         this.selectFileHandler = this.selectFileHandler.bind(this);
         this.fileUploadHandler = this.fileUploadHandler.bind(this);
         this.remove_preview = this.remove_preview.bind(this);
-    }
-
-    onChange(e) {
-        this.setState({ [e.target.name]: e.target.value });
     }
 
     updateProgress(e){
@@ -54,7 +46,7 @@ class POB extends Component{
             const data = new FormData();
             
             data.append('images', e.target.files[i]);
-            axios.post(BACKEND_HOST + '/uploadFiles', data, {
+            axios.post('/uploadFiles', data, {
                 onUploadProgress: progressEvent => {
                     this.setState({
                         photoUploadProgress: Math.round(progressEvent.loaded / progressEvent.total * 100) + '%',
@@ -79,35 +71,38 @@ class POB extends Component{
         this.setState({
             isLoading: true,
         });
-        var params = {
-                streetAddress   : document.getElementById('input_streetAddress').value,
-                city            : document.getElementById('input_city').value,
-                state           : document.getElementById('input_state').value,
-                title           : document.getElementById('input_title').value,
-                description     : document.getElementById('input_description').value,
-                type            : document.getElementById('input_propType').value,
-                numBed          : document.getElementById('input_bed').value,
-                numSleep        : document.getElementById('input_sleeps').value,
-                numBath         : document.getElementById('input_bath').value,
-                fromDate        : document.getElementById('input_startDate').value,
-                toDate          : document.getElementById('input_endDate').value,
-                price           : document.getElementById('ppn').value,
-                minStay         : document.getElementById('ms').value,
-                photoURL        : this.state.photoURL.join(";"),            
+        axios.post("/listingProperty", {
+            params: {
+                streetAddress : document.getElementById('input_streetAddress').value,
+                city : document.getElementById('input_city').value,
+                state : document.getElementById('input_state').value,
+                title : document.getElementById('input_title').value,
+                description : document.getElementById('input_description').value,
+                type : document.getElementById('input_propType').value,
+                numBed : document.getElementById('input_bed').value,
+                numSleep : document.getElementById('input_sleeps').value,
+                numBath : document.getElementById('input_bath').value,
+                fromDate : document.getElementById('input_startDate').value,
+                toDate : document.getElementById('input_endDate').value,
+                price : document.getElementById('ppn').value,
+                minStay : document.getElementById('ms').value,
+                photoURL: this.state.photoURL.join(";"),            
             }
-        
-        this.props.listProperty(params, (res) =>{
+        })
+        .then((res) =>{
             this.setState({
                 isLoading: false,
             });
-            if(res.status === "SUCCESS"){
+            if(res.status === 200){
                 console.log("Successfully listed the property.");
-    
+ 
                 document.getElementById("success_text").innerHTML = "Successfully listed the property!";
                 document.getElementById("success_snackbar").style.setProperty('display', 'block'); 
                 setTimeout(() => {
-                    this.props.history.push("/OwnerProperties");
+                    document.getElementById("success_snackbar").style.setProperty('display', 'none');
                 }, 2000);
+ 
+                window.location = '/OwnerProperties';
             }
             else{
                 console.log("Err in listing the property details in DB.");
@@ -119,10 +114,11 @@ class POB extends Component{
             }
         })
     }
+
  
     render(){
         let redirectVar = null;
-        if(!(this.props.user_type === 'owner')){
+        if(!(cookie.load('user_type') === 'owner')){
             redirectVar = <Redirect to="/OwnerLogin" />;
         }
 
@@ -174,16 +170,16 @@ class POB extends Component{
                                             <div className="mt-2 pt-4 border-bottom">
                                                 <div className="form-group"> 
                                                     <label for ="streetAddress">Street Address</label>    
-                                                    <input type="text" id= "input_streetAddress" className="form-control" name="streetAddress" placeholder="Street Address" value={this.state.streetAddress} onChange={this.onChange} />
+                                                    <input type="text" id= "input_streetAddress" className="form-control" name="streetAddress" placeholder="Street Address"/>
                                                 </div>
                                                 <div className="form-row">                                                                                                             
                                                     <div className="form-group col-md-6"> 
                                                         <label for ="city">City</label>    
-                                                        <input type="text" id= "input_city"className="form-control" name="city" placeholder="City" value={this.state.city} onChange={this.onChange} />
+                                                        <input type="text" id= "input_city"className="form-control" name="city" placeholder="City"  />
                                                     </div>
                                                     <div className="form-group col-md-6"> 
                                                         <label for ="state">State</label>    
-                                                        <input type="text" id= "input_state"className="form-control" name="state" placeholder="State" value={this.state.state} onChange={this.onChange}  /> <br/>
+                                                        <input type="text" id= "input_state"className="form-control" name="state" placeholder="State"  /> <br/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -196,29 +192,29 @@ class POB extends Component{
                                             <p className="font-weight-light text-muted border-bottom mt-2 pt-2">Start out with a descriptive headline, and a detailed summary of your property.</p>
                                             <div className="mt-2 pt-4 border-bottom">
                                                 <div className="form-group"> 
-                                                    <input type="text" id="input_title" className="form-control" name="title" placeholder="Headline" value={this.state.title} onChange={this.onChange}/>
+                                                    <input type="text" id="input_title" className="form-control" name="title" placeholder="Headline"/>
                                                     <p className="text-danger text-right font-weight-light">Minimum 20 character</p>
                                                 </div>
                                                 <div className="form-group"> 
-                                                    <input type="text" id="input_description" className="form-control" name="description" placeholder="Property Description" value={this.state.description} onChange={this.onChange}/>
+                                                    <input type="text" id="input_description" className="form-control" name="description" placeholder="Property Description"/>
                                                     <p className="text-danger text-right font-weight-light">Minimum 400 character</p>
                                                 </div>
                                                 <div className="form-group">
-                                                <input type="text" id="input_propType" className="form-control" name="type" placeholder="Property Type" value={this.state.type} onChange={this.onChange}/>
+                                                <input type="text" id="input_propType" className="form-control" name="type" placeholder="Property Type"/>
                                                     <p className="text-danger text-right font-weight-light">Provide one.</p>
                                                 </div>
                                                 <div className="form-row">                                                                                                             
                                                     <div className="form-group col-md-4"> 
                                                         <label for ="input_bed" className="bmd-label-floating">Bedroom(s)</label>    
-                                                        <input type="number" id= "input_bed" className="form-control" min="1" name="numBed" placeholder="Bedrooms" value={this.state.numBed} onChange={this.onChange} />
+                                                        <input type="number" id= "input_bed" className="form-control" min="1" name="numBed" placeholder="Bedrooms"  />
                                                     </div>
                                                     <div className="form-group col-md-4"> 
                                                         <label for ="input_sleeps" className="bmd-label-floating">Sleeps</label>    
-                                                        <input type="number" id= "input_sleeps" className="form-control" min="1" name="numSleep" placeholder="Sleeps" value={this.state.numSleep} onChange={this.onChange} />
+                                                        <input type="number" id= "input_sleeps" className="form-control" min="1" name="numSleep" placeholder="Sleeps" />
                                                     </div>
                                                     <div className="form-group col-md-4"> 
                                                         <label for ="input_bath" className="bmd-label-floating">Bathroom(s)</label>    
-                                                        <input type="number" id= "input_bath" className="form-control" min="1" step="0.5" name="numBath" placeholder="Bathroom(s)" value={this.state.numBath} onChange={this.onChange} />
+                                                        <input type="number" id= "input_bath" className="form-control" min="1" step="0.5" name="numBath" placeholder="Bathroom(s)"  />
                                                     </div>
                                                 </div>
                                             </div>
@@ -267,11 +263,11 @@ class POB extends Component{
                                             <div className="mt-2 pt-2 border-bottom">
                                                 <div className="form-group"> 
                                                     <label for ="input_startDate">Available From</label>   
-                                                    <input type="date" id= "input_startDate" className="form-control" name="fromDate" placeholder="From" value={this.state.fromDate} onChange={this.onChange}/> <br/>
+                                                    <input type="date" id= "input_startDate" className="form-control" name="fromDate" placeholder="From" /> <br/>
                                                 </div>
                                                 <div className="form-group"> 
                                                     <label for ="input_endDate">Available Until</label>    
-                                                    <input type="date" id="input_endDate" className="form-control" name="toDate" placeholder="Until" value={this.state.toDate} onChange={this.onChange}/>
+                                                    <input type="date" id="input_endDate" className="form-control" name="toDate" placeholder="Until"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -288,12 +284,12 @@ class POB extends Component{
                                                         <div className="input-group-prepend">
                                                             <span className="input-group-text">$</span>
                                                         </div>
-                                                        <input type="text" id= "ppn" className="form-control" name="price" aria-label="Amount (to the nearest dollar)" value={this.state.price} onChange={this.onChange} /> <br/>
+                                                        <input type="text" id= "ppn" className="form-control" name="price" aria-label="Amount (to the nearest dollar)" /> <br/>
                                                     </div>
                                                 </div>
                                                 <div className="form-group"> 
                                                     <label for ="ms">Minimum Stay</label>    
-                                                    <input type="number" id="ms" className="form-control" name="minStay" placeholder="No of days..." value={this.state.minStay} onChange={this.onChange}  />
+                                                    <input type="number" id="ms" className="form-control" name="minStay" placeholder="No of days..."  />
                                                 </div>
                                             </div>
                                             <div className="row mt-2 pt-3">
@@ -321,11 +317,4 @@ class POB extends Component{
     }
 }
 
-const mapStateToProps = state => ({
-    token: state.users.token,
-    user: state.users.user,
-    name: state.users.name,
-    user_type: state.users.user_type,
-});
-
-export default connect(mapStateToProps, {listProperty})(POB);
+export default POB;

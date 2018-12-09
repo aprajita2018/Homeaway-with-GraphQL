@@ -3,129 +3,118 @@ import './PropertyDetails.css';
 import NavBar from '../NavBar/NavBar';
 import axios from 'axios';
 import * as qs from 'query-string';
-import {Redirect} from 'react-router-dom';
-import {fetchProperty} from '../../actions/property_action';
-import {fetchOwner, sendMsg} from "../../actions/users_action";
-import {bookProperty} from '../../actions/bookedTrips_action';
-import {connect} from 'react-redux';
-
+import cookie from 'react-cookies';
 
 class PropertyDetails extends Component{
     constructor(props){
         super(props);
         this.state = {
             id: qs.parse(this.props.location.search).id ,
-            user_type: this.props.user_type,
+            user_type: cookie.load('user_type'),
+            isLoggedIn: false,
             isBooked: false,
             fromDate: "",
             toDate: "",
             priceTotal: "",
             photoURL: "",
-            owner: {}
         };
         this.calculateTotalPrice = this.calculateTotalPrice.bind(this);
         this.handleBookNow = this.handleBookNow.bind(this);
-        this.handleSend = this.handleSend.bind(this);
-        this.onChange = this.onChange.bind(this);
-
-        var property_id = this.state.id;
-
-        this.props.fetchProperty(property_id, (res) => {
-            if(res.status === "SUCCESS"){
-                console.log(res.property);
-                this.setState({
-                    ...res.property
-                });
-                
-                localStorage.setItem('owner_id', this.state.owner_id);
-
-                this.props.fetchOwner(this.state.owner_id, (res) => {
-                    if(res.status === "SUCCESS"){
-                        console.log(res.details);
-                        this.setState({     
-                            owner: {...res.details,}
-                            });
-                    };
-                });
-            };
-        });
     }
 
-    onChange(e) {
-        this.setState({ [e.target.name]: e.target.value });
-      }
+    componentDidMount () {
+        if(this.state.user_type === 'traveler'){
+            this.setState({
+                isLoggedIn: true,
+            })
+        }
 
-    handleSend(e) {
-        console.log("Trying to send message");
-        const values = {
-            msg: this.state.msg_body,
-            to: this.state.owner._id,
-            property_id: this.state.id,
-            property_title: this.state.title
-        };
-        this.props.sendMsg(values, (res) => {
-            console.log(res);
-            if(res.status === "SUCCESS"){
-                console.log("Successsfully sent the message.");
-                document.getElementById("success_text").innerHTML = "Your message is sent. Stay tuned for updates from the owner.";
-                document.getElementById("success_snackbar").style.setProperty('display', 'block'); 
-                setTimeout(() => {
-                    document.getElementById("success_snackbar").style.setProperty('display', 'none');
-                }, 2000);
+        axios.get('/propertyDetails', {
+            params: {
+            id: this.state.id
             }
-            else{
-                console.log("ERROR: Couldn't send msg.");
-                document.getElementById("alert_text").innerHTML = "ERROR: " + res.message;
-                document.getElementById("alert_snackbar").style.setProperty('display', 'block');
-                setTimeout(() => {
-                    document.getElementById("alert_snackbar").style.setProperty('display', 'none');
-                }, 2000);
-            }
-        });
-    } 
+        })
+            .then((res) => {
+                console.log(res.data);
+                this.setState({
+                    title: res.data.title,
+                    type: res.data.type,
+                    description: res.data.description,
+                    price: res.data.price,
+                    numSleep: res.data.numSleep,
+                    numBed: res.data.numBed,
+                    numBath: res.data.numBath,
+                    minStay: res.data.minStay,
+                    city: res.data.city,
+                    owner_id: res.data.owner_id,
+                    streetAddress: res.data.streetAddress,
+                    state: res.data.state,
+                    fromDate: res.data.fromDate,
+                    toDate: res.data.toDate,
+                    photoURL: res.data.photoURL,
+                });
+            })
+            .then( () => {
+                axios.get('/ownerDetails', {
+                    params: {
+                    id: this.state.owner_id
+                    }
+                })
+                    .then((res) => {
+                        console.log(res.data);
+                        this.setState({
+                            fname: res.data.f_name,
+                            lname: res.data.l_name,
+                            email: res.data.email,
+                            phone: res.data.phone_num,
+                            owner_city: res.data.city,
+                            owner_state: res.data.state,
+                            aboutMe: res.data.aboutMe,
+                            hometown: res.data.hometown,
+                            languages: res.data.languages,
+                            gender: res.data.gender,
+                            });
+                    });
+            });
+      }
 
     //handler for book now button  
     handleBookNow(){
-        if(this.state.user_type !== 'traveler'){
-            console.log("Logged in user is not traveler, redirecting to Traveler Login");
-            document.getElementById("alert_text").innerHTML = "Booking is only allowed for travelers. Redirecting to Traveler Login...";
-            document.getElementById("alert_snackbar").style.setProperty('display', 'block');
-            setTimeout(() => {
-                this.props.history.push("/travellerLogin");
-            }, 2000);
+        if(!this.state.isLoggedIn){
+            window.location= '/travellerLogin';
         }
-        else{
-            var params = {
+
+        axios.post('/bookNow', {
+            params: {
                 property_id: this.state.id,
                 owner_id : this.state.owner_id,
                 pricePerNight: this.state.price,
                 fromDate: document.getElementById('booking_from').value,
                 toDate: document.getElementById('booking_until').value,
                 priceTotal: this.state.priceTotal,
-            };
-
-            this.props.bookProperty(params, (res)=> {
-                if(res.status === "SUCCESS"){
-                    console.log("Successfully booked the property.");
-                    this.setState({
-                        isBooked: true,
-                    });
-                    document.getElementById("success_text").innerHTML = "Your booking is done! You can view it in 'My Trips'";
-                    document.getElementById("success_snackbar").style.setProperty('display', 'block'); 
-                    setTimeout(() => {
-                        document.getElementById("success_snackbar").style.setProperty('display', 'none');
-                    }, 2000);
-                }
-                else{                
-                    console.log("Error in booking the property.");
-                    document.getElementById("alert_text").innerHTML = "ERROR: Could not book the property.";
-                    document.getElementById("alert_snackbar").style.setProperty('display', 'block');
-                    setTimeout(() => {
-                        document.getElementById("alert_snackbar").style.setProperty('display', 'none');
-                    }, 2000);
-                }
-            });
-        }
+            }
+        })
+        .then((res) =>{
+            if(res.status === 200){
+                console.log("Successfully booked the property.");
+                this.setState({
+                    isBooked: true,
+                });
+                document.getElementById("success_text").innerHTML = "Successfully booking!";
+                document.getElementById("success_snackbar").style.setProperty('display', 'block'); 
+                setTimeout(() => {
+                    document.getElementById("success_snackbar").style.setProperty('display', 'none');
+                }, 2000);
+            }
+            else{                
+                console.log("Error in booking the property.");
+                document.getElementById("alert_text").innerHTML = "ERROR: Could not book the property.";
+                document.getElementById("alert_snackbar").style.setProperty('display', 'block');
+                setTimeout(() => {
+                    document.getElementById("alert_snackbar").style.setProperty('display', 'none');
+                }, 2000);
+            }
+        })
     }
 
     //function to calculate total price based on from & to dates
@@ -133,7 +122,7 @@ class PropertyDetails extends Component{
         var a = document.getElementById('booking_from').value;
         var b = document.getElementById('booking_until').value;
         var c = this.state.price;
-        if(a !== "" && b!== ""){
+        if(a != "" && b!= ""){
             var d1 = new Date(a);
             var d2 = new Date(b);
             var totalPrice =  ((d2-d1)/(1000*60*60*24)) *c;
@@ -228,10 +217,10 @@ class PropertyDetails extends Component{
                                         Property Manager:
                                     </div>
                                     <div className="col-10">
-                                        <i className="far fa-user" /> : {this.state.owner.f_name} {this.state.owner.l_name}<br />
-                                        <i className="far fa-comment-alt" /> : {this.state.owner.aboutMe} <br />
-                                        <i className="far fa-envelope" /> : {this.state.owner.email} <br />
-                                        <i className="fas fa-phone" /> : {this.state.owner.phone_num}
+                                        <i className="far fa-user" /> : {this.state.fname} {this.state.lname}<br />
+                                        <i className="far fa-comment-alt" /> : {this.state.aboutMe} <br />
+                                        <i className="far fa-envelope" /> : {this.state.email} <br />
+                                        <i className="fas fa-phone" /> : {this.state.phone}
                                     </div>
                                 </div>
                             </div>
@@ -239,16 +228,17 @@ class PropertyDetails extends Component{
                         <div className="col-md-4">
 
                             {/* Confirmed Booking Box */}
-                            <div className="row w-100" style={{display: this.state.isBooked? 'block': 'none'}}>
+                            <div className="w-100 h-100" style={{position: "absolute", 'z-index':'2024', display: this.state.isBooked? 'block': 'none'}}>
                                 <div className="container border border-success m-5 p-3"> 
                                     <h3 className="font-weight-bold text-success text-center">Congratulations!!!</h3>
                                     <p className="text-info text-center mt-4"> Your booking has been confirmed. </p>                                    
                                 </div>
+
                             </div>
 
                             {/* Booking Box */}
-                            <div className="row w-100 float-right" style={{display: this.state.isBooked? 'none': 'block'}}>
-                                <div className="container border border-info">
+                            <div className="w-100 h-100" style={{position: "absolute", 'z-index':'2024', display: this.state.isBooked? 'none': 'block'}}>
+                                <div className="container border border-info float-right">
                                     <h3 className="font-weight-bold">${this.state.price}</h3>
                                     {/* <p className="text-subtitle">per night</p>
                                     Your dates are <span className="text-success">Available!</span> */}
@@ -273,19 +263,7 @@ class PropertyDetails extends Component{
                                         <button  className="btn btn-primary my-2 btn-block" onClick={this.handleBookNow}>Book Now!</button>
                                 </div>
                             </div>
-                            <div className="row w-100 m-2 p-2">
-                                <div className="container">
-                                    <div className="card">
-                                        <div className="card-body">
-                                            <h4 className="card-title font-weight-light text-info">Ask Owner a question!</h4>
-                                            <textarea className="col-12" name = "msg_body" id ="msg_body" type ="text" placeholder ="Ask away!!!" value={this.state.msg_body} onChange={this.onChange} required></textarea>
-                                            <button className="btn btn-primary" onClick={this.handleSend}>Send</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
-                        
                         <div id="alert_snackbar" className="alert alert-danger snackbar" role="alert" style={{display: 'none'}}>
                             <p id="alert_text"></p>
                         </div>
@@ -298,12 +276,4 @@ class PropertyDetails extends Component{
         );
     }
 }
-
-const mapStateToProps = state => ({
-    token: state.users.token,
-    user: state.users.user,
-    name: state.users.name,
-    user_type: state.users.user_type,
-});
-
-export default connect(mapStateToProps, {fetchProperty, fetchOwner, sendMsg, bookProperty})(PropertyDetails);
+export default PropertyDetails;

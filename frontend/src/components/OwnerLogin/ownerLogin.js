@@ -1,52 +1,51 @@
 import React,{Component} from 'react';
 import NavBar from '../NavBar/NavBar';
-import {connect} from "react-redux";
-import {login} from "../../actions/users_action";
+import cookie from 'react-cookies';
+import axios from 'axios';
+import {Redirect} from 'react-router';
 
 class OwnerLogin extends Component{
-
     constructor(props){
         super(props);
-
         this.state = {
-            email: '',
-            password: ''
-        }
-
-        this.onChange = this.onChange.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
+            name: null,
+            type: null,
+            email: null,
+        };
+        this.handleLogin = this.handleLogin.bind(this);
     }
 
-    onChange(e) {
-        this.setState({ [e.target.name]: e.target.value });
-      }
-    
-    onSubmit(e) {
-        e.preventDefault();
-        const values = {
-            user_type: 'owner',
-            email: this.state.email,
-            password: this.state.password
-        };
-        this.props.login(values, (res) => {
-            console.log(res);
-            if(res.status === "SUCCESS"){
-                this.props.history.push("/");            
+    handleLogin = () => {
+        this.setState({
+            email:  document.getElementById('inputEmail'),
+        });
+        axios.post('/login', {
+            params: {
+                email: document.getElementById('inputEmail'),
+                password: document.getElementById('inputPassword'),
+                user_type: document.getElementById('user_type'),
             }
-            else{
-                console.log("Err in login.");
-                document.getElementById("alert_text").innerHTML = "ERROR: " + res.message;
-                document.getElementById("alert_snackbar").style.setProperty('display', 'block');
-                setTimeout(() => {
-                    document.getElementById("alert_snackbar").style.setProperty('display', 'none');
-                }, 2000);
+        })
+        .then((res) => {
+            if(res.status === 200){
+                console.log("Successful login for " + this.state.email);
+                this.setState({
+                    name: cookie.load('name'),
+                    type: cookie.load('user_type'),
+                });
+                window.location = "/";
             }
         });
     }
 
     render(){
+        let redirectVar = null;
+        if(cookie.load('user_type') === 'owner'){
+            redirectVar = <Redirect to="/" />;
+        }
         return(
             <div>
+                {redirectVar}
                 <NavBar location="ownerLogin" />
                 <div class="container mt-5 pt-5"> 
                     <div class="row col-md-6 float-right">
@@ -56,20 +55,21 @@ class OwnerLogin extends Component{
                                 <h5 className="text-info font-weight-light border-bottom">Need an account? <a href="./ownerSignup">Sign Up</a></h5>
                             </div>
                             <div class="login-form mt-4">
-                                <form onSubmit={this.onSubmit}>
+                                <form method="POST" action="/login">
                                     <div class="form-row">
-                                        <div class="form-group col-md-12">
-                                            <input id="inputEmail" name="email" placeholder="Email Address" class="form-control" type="email" value={this.state.email} onChange={this.onChange} required/>
-                                        </div>
-                                        <div class="form-group col-md-12">
-                                            <input type="password" class="form-control" id="inputPassword" name="password" placeholder="Password" value={this.state.password} onChange={this.onChange} required/>
-                                        </div>
+                                    <div class="form-group col-md-12">
+                                        <input id="inputEmail" name="email" placeholder="Email Address" class="form-control" type="email" required/>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <input type="password" class="form-control" id="inputPassword" name="password" placeholder="Password" required/>
+                                    </div>
+                                    <input type="hidden" name="user_type" id="user_type" value="owner" />
                                     </div>
                                     <div class="text-left mt-2">
                                         <a href="#">Forgot Password? </a><br/><br/>
                                     </div>                                
                                     <div class="form-row">
-                                        <button class="btn btn-primary btn-lg btn-block" type="submit">Log In</button>
+                                        <button class="btn btn-primary btn-lg btn-block" onClick={this.handleLogin}>Log In</button>
                                     </div>
                                     <div class="form-row form-group form-check float-left mt-2">
                                         <input class="form-check-input" type="checkbox" id="updatecheck1"/>
@@ -78,12 +78,6 @@ class OwnerLogin extends Component{
                                         </label>
                                     </div>
                                 </form>
-                                <div id="alert_snackbar" className="alert alert-danger snackbar" role="alert" style={{display: 'none'}}>
-                                    <p id="alert_text"></p>
-                                </div>
-                                <div id="success_snackbar" className="alert alert-success snackbar" role="alert" style={{display: 'none'}}>
-                                    <p id="success_text"></p>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -96,4 +90,4 @@ class OwnerLogin extends Component{
     }
 }
 
-export default connect(null, {login})(OwnerLogin);
+    export default OwnerLogin;

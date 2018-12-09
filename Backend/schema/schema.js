@@ -155,15 +155,16 @@ const Mutation = new GraphQLObjectType({
 
                     console.log("Inside Create User function!");
                     if(err){
-                        res.code = "400";
-                        res.value = "ERROR: Couldn't create the user.";
-                        console.log(res.value);
-                        res.sendStatus(400).end();
+                        console.log('Error while adding the user in db.')
+                        // res.code = "400";
+                        // res.value = "ERROR: Couldn't create the user.";
+                        // console.log(res.value);
+                        // // res.sendStatus(400).end();
                     }
                     else{
                         console.log("Successfuly created the user in db!");
                         
-                        res.status(200).send({status: "SUCCESS", message: "User successfully created"});
+                        // res.status(200).send({status: "SUCCESS", message: "User successfully created"});
                     }; 
 
                 });

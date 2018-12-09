@@ -2,33 +2,28 @@ import React, {Component} from 'react';
 import './userProfile.css';
 import NavBar from '../NavBar/NavBar';
 import UserToolbar from '../UserToolbar/UserToolbar';
+import cookie from 'react-cookies';
 import axios from 'axios';
 import {Redirect} from 'react-router';
-import { connect } from "react-redux";
-import { update, getUserDetails } from "../../actions/users_action";
-import {BACKEND_HOST} from '../../actions/host_config';
 
 class TravellerProfile extends Component{
+
     constructor(props){
         super(props);
-
+        this.state = {
+            name: cookie.load('name'),
+            user_type: cookie.load('user_type'),
+            photoURL: null,
+        };
         this.handleSave = this.handleSave.bind(this);
         this.fileUploadHandler = this.fileUploadHandler.bind(this);
-
-        this.props.getUserDetails(() => {
-            console.log("All details fetched");
-        });
-
-        this.state = {
-            photoURL: this.props.user.photoURL
-        }
     }
 
     fileUploadHandler(e){
         const data = new FormData();
 
         data.append('images', e.target.files[0]);
-        axios.post(BACKEND_HOST + '/uploadFiles',data)
+        axios.post('/uploadFiles',data)
         .then((res) => {
             if(res.status === 200){
                 console.log("File successfully uploaded : " + res.data);
@@ -41,9 +36,10 @@ class TravellerProfile extends Component{
             }
         })
     }
-    
+
     handleSave = (e) =>{
-        var params= {
+        axios.post('/updateProfile', {
+            params: {
                 fname: document.getElementById('input_fname').value,
                 lname: document.getElementById('input_lname').value,
                 email: document.getElementById('input_email').value,
@@ -55,16 +51,16 @@ class TravellerProfile extends Component{
                 languages: document.getElementById('input_languages').value,
                 gender: document.getElementById('profileGender').value,
                 photoURL: this.state.photoURL,
-            }; 
-
-        this.props.update(params, (res) => {
-            if(res.status === "SUCCESS"){
+            }            
+        })
+        .then((res) =>{
+            if(res.status === 200){
                 console.log("Successful update!");
                 document.getElementById("success_text").innerHTML = "Successfully updated your profile!";
                 document.getElementById("success_snackbar").style.setProperty('display', 'block'); 
                 setTimeout(() => {
                     document.getElementById("success_snackbar").style.setProperty('display', 'none');
-                }, 2000);              
+                }, 10000);              
             }
             else{
                 console.log("Err in updating the user profile.");
@@ -74,21 +70,32 @@ class TravellerProfile extends Component{
                     document.getElementById("alert_snackbar").style.setProperty('display', 'none');
                 }, 2000);
             }
-        })  
+        })
     }
 
-
-    componentWillReceiveProps(nextProps){
-        if(nextProps.user){
+    componentDidMount () {
+        axios.get('/userDetails')
+        .then((res) => {
+            console.log(res.data);
             this.setState({
-                user: nextProps.user
-            })
-        }
+                fname: res.data.f_name,
+                lname: res.data.l_name,
+                email: res.data.email,
+                phone: res.data.phone_num,
+                city: res.data.city,
+                state: res.data.state,
+                aboutMe: res.data.aboutMe,
+                hometown: res.data.hometown,
+                languages: res.data.languages,
+                gender: res.data.gender,
+                photoURL: res.data.photoURL,
+            });
+        });
     }
 
     render(){
         let redirectVar = null;
-        if(this.props.user.name === ""){
+        if(!cookie.load('name')){
             redirectVar = <Redirect to="/travellerLogin" />;
         }
         return(
@@ -101,7 +108,7 @@ class TravellerProfile extends Component{
                         <div className= "container col-md-5  mt-4 pt-4">
                             <div className="profile-photo text-center" >
                                 <div className="align-center">
-                                    <img className="rounded-circle" src={this.props.user.photoURL === null? "img/profile-clipart.jpg" : this.state.photoURL} height="80px" width="80px" alt="profile"/>
+                                    <img className="rounded-circle" src={this.state.photoURL === null? "img/profile-clipart.jpg" : this.state.photoURL} height="80px" width="80px" alt="profile photo"/>
                                 </div>
                                 <input 
                                     type = "file"
@@ -113,51 +120,53 @@ class TravellerProfile extends Component{
                                         <i className="icon-edit fas fa-pen"></i>
                                 </button>
                             </div>
-                            <h3 className = "userName text-center">{this.props.name}</h3>
+                            <h3 className = "userName text-center">{this.state.name}</h3>
                         </div>
                         <div>
                             <div className="container col-md-5  mt-3 pt-3 border rounded">
                                 <div className= "profile-details ">
                                     <h3>Profile Information</h3><br/>
-                                        <div className="form-group col-md-10">
-                                            <input id="input_fname" name="fname" className="form-control" defaultValue={this.props.user.f_name} type="text" placeholder="First Name"/>
+                                    {/* <form class="profiledetails" id="input_updateForm" method="post" action="/updateProfile"> */}
+                                        <div class="form-group col-md-10">
+                                            <input id="input_fname" name="fname" class="form-control" defaultValue={this.state.fname} type="text" placeholder="First Name"/>
                                         </div>
-                                        <div className="form-group col-md-10">
-                                            <input id="input_lname" name="lname" className="form-control" defaultValue={this.props.user.l_name} type="text" placeholder="Last Name"/>
+                                        <div class="form-group col-md-10">
+                                            <input id="input_lname" name="lname" class="form-control" defaultValue={this.state.lname} type="text" placeholder="Last Name"/>
                                         </div>
-                                        <div className="form-group col-md-10">
-                                            <input id="input_email" name="email" className="form-control" defaultValue={this.props.user.email} type="text" placeholder="Email"/>
+                                        <div class="form-group col-md-10">
+                                            <input id="input_email" name="email" class="form-control" defaultValue={this.state.email} type="text" placeholder="Email"/>
                                         </div>
-                                        <div className="form-group col-md-10">
-                                            <input id="input_phone" name="phone" className="form-control" defaultValue={this.props.user.phone_num} type="text" placeholder="Phone"/>
+                                        <div class="form-group col-md-10">
+                                            <input id="input_phone" name="phone" class="form-control" defaultValue={this.state.phone} type="text" placeholder="Phone"/>
                                         </div>
-                                        <div className="form-group col-md-10">
-                                            <input id="input_aboutMe" name="aboutMe" className="form-control" defaultValue={this.props.user.aboutMe} type="text" placeholder = "About me"/>                                     
+                                        <div class="form-group col-md-10">
+                                            <input id="input_aboutMe" name="aboutMe" class="form-control" defaultValue={this.state.aboutMe} type="text" placeholder = "About me"/>                                     
                                         </div>
-                                        <div className="form-group col-md-10">
-                                            <input id="input_city" name="city" className="form-control" defaultValue={this.props.user.city} type="text" placeholder = "City"/>
+                                        <div class="form-group col-md-10">
+                                            <input id="input_city" name="city" class="form-control" defaultValue={this.state.city} type="text" placeholder = "City"/>
                                         </div>
-                                        <div className="form-group col-md-10">
-                                            <input id="input_state" name="state" className="form-control" defaultValue={this.props.user.state} type="text" placeholder = "State"/>
+                                        <div class="form-group col-md-10">
+                                            <input id="input_state" name="state" class="form-control" defaultValue={this.state.state} type="text" placeholder = "State"/>
                                         </div>                                            
-                                        <div className="form-group col-md-10">
-                                            <input id="input_hometown" name="hometown" className="form-control" defaultValue={this.props.user.hometown} type="text" placeholder = "Hometown"/>
+                                        <div class="form-group col-md-10">
+                                            <input id="input_hometown" name="hometown" class="form-control" defaultValue={this.state.hometown} type="text" placeholder = "Hometown"/>
                                         </div>
-                                        <div className="form-group col-md-10">
-                                            <input id="input_languages" name="languages" className="form-control" defaultValue={this.props.user.languages} type="text" placeholder = "Languages"/>
+                                        <div class="form-group col-md-10">
+                                            <input id="input_languages" name="languages" class="form-control" defaultValue={this.state.languages} type="text" placeholder = "Languages"/>
                                         </div>                                   
                                         <div className="col-md-10">
-                                        <select id="profileGender" name="gender" form="input_updateForm" className="form-control">
-                                            <option value="female" selected={this.props.user.gender === 'female' ? 'selected' : ''}>Female</option>
-                                            <option value="male" selected={this.props.user.gender === 'male' ? 'selected' : ''}>Male</option>
-                                            <option value="other" selected={this.props.user.gender === 'other' ? 'selected' : ''}>Other</option>
+                                        <select id="profileGender" name="gender" form="input_updateForm" class="form-control">
+                                            <option value="female" selected={this.state.gender === 'female' ? 'selected' : ''}>Female</option>
+                                            <option value="male" selected={this.state.gender === 'male' ? 'selected' : ''}>Male</option>
+                                            <option value="other" selected={this.state.gender === 'other' ? 'selected' : ''}>Other</option>
                                         </select>
                                         </div>
-                                        <input type = "hidden" name = "photoURL" value = {this.props.user.photoURL}/>
+                                        <input type = "hidden" name = "photoURL" value = {this.state.photoURL}/>
                                         <div className=" row col-md-8 mt-2 pt-2">
-                                            <button className="btn btn-info mx-2"  type="reset" >Reset</button>
-                                            <button className="btn btn-primary mx-2" onClick={this.handleSave}>Save</button>
+                                            <button class="btn btn-info mx-2"  type="reset" >Reset</button>
+                                            <button class="btn btn-primary mx-2" onClick={this.handleSave}>Save</button>
                                         </div>
+                                    {/* </form> */}
                                 </div>
                             </div>
                             <div id="alert_snackbar" className="alert alert-danger snackbar" role="alert" style={{display: 'none'}}>
@@ -174,11 +183,4 @@ class TravellerProfile extends Component{
     }
 }
 
-const mapStateToProps = state => ({
-    token: state.users.token,
-    user: state.users.user,
-    name: state.users.name,
-    user_type: state.users.user_type
-});
-
-export default connect(mapStateToProps, {update, getUserDetails})(TravellerProfile);
+export default TravellerProfile;

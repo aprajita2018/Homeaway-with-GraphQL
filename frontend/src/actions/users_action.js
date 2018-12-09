@@ -22,7 +22,7 @@ export const login = (values, callback) => dispatch =>  {
         });
 }
 
-//function/ action to post the user sign up form
+// function action to post the user sign up form
 export const signup = (values, callback) => dispatch => {        
     axios.post( BACKEND_HOST + '/userSignup', values)
         .then((res) => {

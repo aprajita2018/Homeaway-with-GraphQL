@@ -1,57 +1,42 @@
 import React, {Component} from 'react';
 import './travellerSignup.css';
 import NavBar from '../NavBar/NavBar';
-//import { reduxForm, Field, change } from 'redux-form';
-import {connect} from 'react-redux';
-import {signup} from "../../actions/users_action";
+import { graphql, compose } from 'react-apollo';
+import { addUserMutation} from '../../mutation/mutation';
 
 
 class TravellerSignup extends Component{
     constructor(props){
         super(props);
-
         this.state = {
-            fname: "",
-            lname: "",
-            email: '',
-            password: ''
-        }
 
-        this.onChange = this.onChange.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
-    }
-
-    onChange(e) {
-        this.setState({ [e.target.name]: e.target.value });
-      }
-
-    onSubmit(e){
-        e.preventDefault();
-        const values = {
-            user_type: 'traveler',
-            ...this.state
         };
-        console.log(values);
-        this.props.signup(values, (res) => {
-            if(res.status === "SUCCESS"){
-                console.log("Successfully created user!");
-                document.getElementById("success_text").innerHTML = "Your account is created! Redirecting you to Login ...";
-                document.getElementById("success_snackbar").style.setProperty('display', 'block'); 
-                setTimeout(() => {
-                    this.props.history.push('/travellerLogin');              
-                }, 3000);
-            }
-            else{
-                console.log("Err in updating the user profile.");
-                document.getElementById("alert_text").innerHTML = "ERROR: Could not create your account.";
-                document.getElementById("alert_snackbar").style.setProperty('display', 'block');
-                setTimeout(() => {
-                    document.getElementById("alert_snackbar").style.setProperty('display', 'none');
-                }, 2000);
-            }
-        })
     }
 
+    submitForm(e){
+        e.preventDefault();
+        if(document.getElementById('fname').value === "" || document.getElementById('lname').value === "" || document.getElementById('email').value === "" || document.getElementById('password').value === "")
+        {
+            alert("All the fields on the page are mandatory. Fill all to Sign up!")    
+        }
+        else{
+            this.props.addUserMutation({
+                params: {
+                    fname: document.getElementById('fname'),
+                    lname: document.getElementById('lname'),
+                    email: document.getElementById('email'),
+                    password: document.getElementById('password'),
+                    user_type: document.getElementById('user_type'),
+                }
+            })
+            // .then((res) => {
+            //     if(res.status === 200){
+            //         console.log("Account successfully created");
+            //         window.location = "/travellerLogin";
+            //     }
+            // });
+        }
+    }
 
     render(){
         return(
@@ -70,31 +55,26 @@ class TravellerSignup extends Component{
                     <div className="row text-center">
                         <div className="col-md-6 offset-md-3 card card-body">
                             <div className="login-form mt-4">
-                                <form onSubmit={this.onSubmit}>
+                                <form id= 'add-user' onSubmit={this.submitForm.bind(this)}>
                                     <div className="form-row">
                                         <div className="form-group col-xs-6 col-md-6">
-                                            <input className="form-control" type='text' placeholder='First Name' id='fname' name='fname' value={this.state.fname} onChange={this.onChange}/>
+                                            <input type="text" className="form-control" id='fname' name="fname" placeholder="First Name" required />
                                         </div>
-                                        <div className="form-group col-xs-6 col-md-6">
-                                            <input className="form-control" type='text' placeholder='Last Name' id='lname' name='lname' value={this.state.lname} onChange={this.onChange}/>
-                                        </div>
-                                        <div className="form-group col-md-12">
-                                            <input className="form-control" type='text' placeholder='Email address' id='email' name='email' value={this.state.email} onChange={this.onChange}/>
-                                        </div>
-                                        <div className="form-group col-md-12">
-                                            <input className="form-control" type='password' placeholder='Password' id='password' name='password' value={this.state.password} onChange={this.onChange}/>
-                                        </div>
+                                    <div className="form-group col-xs-6 col-md-6">
+                                        <input type="text" className="form-control" id='lname' name="lname" placeholder="Last Name" required />
+                                    </div>
+                                    <div className="form-group col-md-12">
+                                        <input type="text" className="form-control" id='email' name="email" placeholder="Email Address" required />
+                                    </div>
+                                    <div className="form-group col-md-12">
+                                        <input type="password" className="form-control" id='password' name="password" placeholder="Password" required />
+                                    </div>
+                                        <input type="hidden" id="user_type" name="user_type" value="traveler" />
                                     </div>                           
                                     <div className="form-row">
-                                        <button className="btn btn-primary btn-lg btn-block" type='submit'>Sign Me Up</button>
+                                        <button className="btn btn-primary btn-lg btn-block">Sign Me Up</button>
                                     </div>
                                 </form>
-                                <div id="alert_snackbar" className="alert alert-danger snackbar" role="alert" style={{display: 'none'}}>
-                                <p id="alert_text"></p>
-                                </div>
-                                <div id="success_snackbar" className="alert alert-success snackbar" role="alert" style={{display: 'none'}}>
-                                    <p id="success_text"></p>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -103,4 +83,6 @@ class TravellerSignup extends Component{
     }
 }
 
-export default (connect(null, {signup})(TravellerSignup));
+export default compose(
+    graphql(addUserMutation, { name: "addUserMutation" })
+)(TravellerSignup);
