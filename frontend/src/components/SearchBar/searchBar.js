@@ -25,7 +25,7 @@ class SearchBar extends Component{
                 }
             })
             .then((res) =>{
-                if(res.status == 200){
+                if(res.status === 200){
                     console.log("Successfully searched for the properties.");
                     window.location =  './searchResultPage?id=' + res.data;
                 }
@@ -42,7 +42,7 @@ class SearchBar extends Component{
                     <div className="row py-3 px-1 align-self-center font-size-small">
                         <div className="col-4 input-group">
                             <input type="text" id="input_city" name="city" className="w-100 form-control" placeholder="Enter the location" required/>
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                            <span className="input-group-addon"><i className="glyphicon glyphicon-user"></i></span>
                         </div>
                         <div className="col-2" >
                             <input type="date" id="input_fromDate" name="fromDate"  className="w-100 form-control" placeholder="Arive" required />

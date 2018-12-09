@@ -8,6 +8,13 @@ import { addUserMutation} from '../../mutation/mutation';
 class TravellerSignup extends Component{
     constructor(props){
         super(props);
+        this.state = {
+            f_name: '',
+            l_name: '',
+            email: '',
+            password: '',
+            user_type: 'traveler'
+        }
     }
 
     submitForm(e){
@@ -18,12 +25,12 @@ class TravellerSignup extends Component{
         }
         else{
             this.props.addUserMutation({
-                params: {
-                    fname   : document.getElementById('fname'),
-                    lname   : document.getElementById('lname'),
-                    email   : document.getElementById('email'),
-                    password: document.getElementById('password'),
-                    user_type: document.getElementById('user_type'),
+                variables: {
+                    f_name      : this.state.f_name,
+                    l_name      : this.state.l_name,
+                    email       : this.state.email,
+                    password    : this.state.password,
+                    user_type   : this.state.user_type,
                 }
             })
         }
@@ -49,16 +56,16 @@ class TravellerSignup extends Component{
                                 <form id= 'add-user' onSubmit={this.submitForm.bind(this)}>
                                     <div className="form-row">
                                         <div className="form-group col-xs-6 col-md-6">
-                                            <input type="text" className="form-control" id='fname' name="fname" placeholder="First Name" required />
+                                            <input type="text" className="form-control" id='fname' name="fname" placeholder="First Name" onChange={ (e) => this.setState({ f_name: e.target.value })} required />
                                         </div>
                                     <div className="form-group col-xs-6 col-md-6">
-                                        <input type="text" className="form-control" id='lname' name="lname" placeholder="Last Name" required />
+                                        <input type="text" className="form-control" id='lname' name="lname" placeholder="Last Name" onChange={ (e) => this.setState({ l_name: e.target.value })} required />
                                     </div>
                                     <div className="form-group col-md-12">
-                                        <input type="text" className="form-control" id='email' name="email" placeholder="Email Address" required />
+                                        <input type="text" className="form-control" id='email' name="email" placeholder="Email Address" onChange={ (e) => this.setState({ email: e.target.value })} required />
                                     </div>
                                     <div className="form-group col-md-12">
-                                        <input type="password" className="form-control" id='password' name="password" placeholder="Password" required />
+                                        <input type="password" className="form-control" id='password' name="password" placeholder="Password" onChange={ (e) => this.setState({ password: e.target.value })} required />
                                     </div>
                                         <input type="hidden" id="user_type" name="user_type" value="traveler" />
                                     </div>                           

@@ -47,33 +47,33 @@ class OwnerLogin extends Component{
             <div>
                 {redirectVar}
                 <NavBar location="ownerLogin" />
-                <div class="container mt-5 pt-5"> 
-                    <div class="row col-md-6 float-right">
-                        <div class="border py-4 px-5">
-                            <div class="login-title">
+                <div className="container mt-5 pt-5"> 
+                    <div className="row col-md-6 float-right">
+                        <div className="border py-4 px-5">
+                            <div className="login-title">
                                 <h4 className="text-dark font-weight-light">Owner Login</h4>
                                 <h5 className="text-info font-weight-light border-bottom">Need an account? <a href="./ownerSignup">Sign Up</a></h5>
                             </div>
-                            <div class="login-form mt-4">
+                            <div className="login-form mt-4">
                                 <form method="POST" action="/login">
-                                    <div class="form-row">
-                                    <div class="form-group col-md-12">
-                                        <input id="inputEmail" name="email" placeholder="Email Address" class="form-control" type="email" required/>
+                                    <div className="form-row">
+                                    <div className="form-group col-md-12">
+                                        <input id="inputEmail" name="email" placeholder="Email Address" className="form-control" type="email" required/>
                                     </div>
-                                    <div class="form-group col-md-12">
-                                        <input type="password" class="form-control" id="inputPassword" name="password" placeholder="Password" required/>
+                                    <div className="form-group col-md-12">
+                                        <input type="password" className="form-control" id="inputPassword" name="password" placeholder="Password" required/>
                                     </div>
                                     <input type="hidden" name="user_type" id="user_type" value="owner" />
                                     </div>
-                                    <div class="text-left mt-2">
+                                    <div className="text-left mt-2">
                                         <a href="#">Forgot Password? </a><br/><br/>
                                     </div>                                
-                                    <div class="form-row">
-                                        <button class="btn btn-primary btn-lg btn-block" onClick={this.handleLogin}>Log In</button>
+                                    <div className="form-row">
+                                        <button className="btn btn-primary btn-lg btn-block" onClick={this.handleLogin}>Log In</button>
                                     </div>
-                                    <div class="form-row form-group form-check float-left mt-2">
-                                        <input class="form-check-input" type="checkbox" id="updatecheck1"/>
-                                        <label class="form-check-label" for="updatecheck1">
+                                    <div className="form-row form-group form-check float-left mt-2">
+                                        <input className="form-check-input" type="checkbox" id="updatecheck1"/>
+                                        <label className="form-check-label" htmlFor="updatecheck1">
                                             Keep me signed in
                                         </label>
                                     </div>
