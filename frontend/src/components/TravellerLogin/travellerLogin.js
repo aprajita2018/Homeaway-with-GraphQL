@@ -3,9 +3,8 @@ import './travellerLogin.css';
 import NavBar from '../NavBar/NavBar';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
-// import axios from 'axios';
-import { graphql, compose } from 'react-apollo';
-import { loginUserMutation } from '../../mutation/mutation';
+import axios from 'axios';
+import { BACKEND_HOST } from '../../actions/host_config';
 
 class TravellerLogin extends Component{
     constructor(props){
@@ -13,21 +12,20 @@ class TravellerLogin extends Component{
         this.state = {
             name: null,
             type: null,
-            email: '',
-            password: '',
-            user_type: ''
+            email: null,
         };
         this.handleLogin = this.handleLogin.bind(this);
     }
 
-    handleLogin = (e) => {
-        e.preventDefault();
-
-        this.props.addUserMutation({
-            variables: {
-                email       : this.state.email,
-                password    : this.state.password,
-                user_type   : this.state.user_type,
+    handleLogin = () => {
+        this.setState({
+            email:  document.getElementById('inputEmail'),
+        });
+        axios.post(BACKEND_HOST + '/login', {
+            params: {
+                email: document.getElementById('inputEmail'),
+                password: document.getElementById('inputPassword'),
+                user_type: document.getElementById('user_type'),
             }
         })
         .then((res) => {
@@ -66,13 +64,13 @@ class TravellerLogin extends Component{
                                 <h4>Account Login</h4>
                             </div>
                             <div className="login-form mt-4">
-                                <form onSubmit={this.handleLogin.bind(this)}>
+                                <form method="POST" action="/login">
                                     <div className="form-row">
                                     <div className="form-group col-md-12">
-                                        <input id="inputEmail" name="email" placeholder="Email Address" className="form-control" type="text" onChange={ (e) => this.setState({ email: e.target.value })} required/>
+                                        <input id="inputEmail" name="email" placeholder="Email Address" className="form-control" type="text" required/>
                                     </div>
                                     <div className="form-group col-md-12">
-                                        <input id="inputPassword" type="password" className="form-control" name="password" placeholder="Password" onChange={ (e) => this.setState({ password: e.target.value })} required/>
+                                        <input id="inputPassword" type="password" className="form-control" name="password" placeholder="Password" required/>
                                     </div>
                                     <input type="hidden" name="user_type" id="user_type" value="traveler" />
                                     </div>
@@ -80,13 +78,13 @@ class TravellerLogin extends Component{
                                         <a href="#">Forgot Password? </a><br/><br/>
                                     </div>                                
                                     <div className="form-row">
-                                        <button className="btn btn-primary btn-lg btn-block">Log In</button>
+                                        <button className="btn btn-primary btn-lg btn-block" onClick={this.handleLogin}>Log In</button>
                                     </div>
                                     <div className="form-row form-check float-left mt-2">
-                                        <input className="form-check-input" type="checkbox" id="updatecheck1"/>
-                                        <label className="form-check-label" htmlFor="updatecheck1">
-                                            Keep me signed in
-                                        </label>
+                                            <input className="form-check-input" type="checkbox" id="updatecheck1"/>
+                                            <label className="form-check-label" htmlFor="updatecheck1">
+                                                Keep me signed in
+                                            </label>
                                     </div>
                                 </form>
                             </div>
@@ -98,6 +96,4 @@ class TravellerLogin extends Component{
     }
 }
 
-export default compose(
-    graphql(loginUserMutation, { name: "loginUserMutation" })
-) (TravellerLogin);
+export default TravellerLogin;

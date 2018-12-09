@@ -7,9 +7,9 @@ var config = require('../config/config');
 
 //handle login using passport & jwt tokens
 router.post('*', (req, res, next) =>{
-    var email = req.body.email;
-    var pwd = req.body.password;
-    var user_type = req.body.user_type;
+    var email = req.body.params.email;
+    var pwd = req.body.params.password;
+    var user_type = req.body.params.user_type;
 
     User.getUserByEmail(email, user_type, (err, user) => {
         if(err) throw err;

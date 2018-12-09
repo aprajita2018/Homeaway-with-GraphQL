@@ -159,6 +159,7 @@ const RootQuery = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
     name: 'Mutation',
     fields: {
+
         addUser: {
             type: UserType,
             args: {
@@ -183,6 +184,41 @@ const Mutation = new GraphQLObjectType({
                 return newUser;
             }
         },
+
+        // loginUser: {
+        //     type: UserType,
+        //     args: {
+        //         user_type : { type: GraphQLString },
+        //         email     : { type: GraphQLString },
+        //         password  : { type: GraphQLString },
+        //     },
+
+        //     resolve(parent, args){
+        //         console.log('Inside loginUser resolver.');
+
+        //         var user_type   = args.user_type;
+        //         var email       = args.email;
+        //         var pwd    = args.password;
+
+        //         User.getUserByEmail(email, user_type, (err, user)=> {
+        //             if(err) throw err;
+        //             if(!user){
+        //                 console.log('User not found.');
+        //             }
+        //             else{
+        //                 console.log(user);
+        //                 User.comparePassword(pwd, user.password, (err, isMatch) => {
+        //                     if(err) throw err;
+        //                     if(isMatch){
+        //                         console.log('Found User in DB!');
+
+        //                     }
+        //                 })
+
+        //             }
+        //         })
+        //     }
+        // },
 
         // updateUser: {
 

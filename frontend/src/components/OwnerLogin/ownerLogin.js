@@ -3,6 +3,7 @@ import NavBar from '../NavBar/NavBar';
 import cookie from 'react-cookies';
 import axios from 'axios';
 import {Redirect} from 'react-router';
+import { BACKEND_HOST } from '../../actions/host_config';
 
 class OwnerLogin extends Component{
     constructor(props){
@@ -10,20 +11,22 @@ class OwnerLogin extends Component{
         this.state = {
             name: null,
             type: null,
-            email: null,
+            email: '',
+            password:'',
+            user_type:'owner',
         };
         this.handleLogin = this.handleLogin.bind(this);
     }
 
-    handleLogin = () => {
-        this.setState({
-            email:  document.getElementById('inputEmail'),
-        });
-        axios.post('/login', {
+    handleLogin = (e) => {
+
+        e.preventDefault();
+        console.log('Inside handleLogin function');
+        axios.post(BACKEND_HOST + '/login', {
             params: {
-                email: document.getElementById('inputEmail'),
-                password: document.getElementById('inputPassword'),
-                user_type: document.getElementById('user_type'),
+                email: this.state.email,
+                password: this.state.password,
+                user_type: this.state.user_type,
             }
         })
         .then((res) => {
@@ -55,13 +58,13 @@ class OwnerLogin extends Component{
                                 <h5 className="text-info font-weight-light border-bottom">Need an account? <a href="./ownerSignup">Sign Up</a></h5>
                             </div>
                             <div className="login-form mt-4">
-                                <form method="POST" action="/login">
+                                <form method="POST" >
                                     <div className="form-row">
                                     <div className="form-group col-md-12">
-                                        <input id="inputEmail" name="email" placeholder="Email Address" className="form-control" type="email" required/>
+                                        <input id="inputEmail" name="email" placeholder="Email Address" className="form-control" type="email" onChange={ (e) => this.setState({ email: e.target.value })} required/>
                                     </div>
                                     <div className="form-group col-md-12">
-                                        <input type="password" className="form-control" id="inputPassword" name="password" placeholder="Password" required/>
+                                        <input type="password" className="form-control" id="inputPassword" name="password" placeholder="Password" onChange={ (e) => this.setState({ password: e.target.value })} required/>
                                     </div>
                                     <input type="hidden" name="user_type" id="user_type" value="owner" />
                                     </div>
