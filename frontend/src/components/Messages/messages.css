@@ -1,0 +1,21 @@
+.chat-message{
+    background: #89b6ff;
+    width: 60%;
+    clear: both;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 5px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.my-chat{
+    background: #d6ff9e;
+    text-align: right;
+    float: right;
+}
+
+.chat-message-timestamp{
+    font-size: 0.5em;
+    font-weight: bold;
+}

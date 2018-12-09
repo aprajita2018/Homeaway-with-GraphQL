@@ -1,0 +1,22 @@
+
+.profile-details{
+    background-color: rgb(255, 255, 255);
+    border: 1px silver #b1b6bd;
+    margin-bottom: 20px;
+    min-height: 50px;
+    padding-block-end: 0%;
+    padding: 30px 15px;
+    align-content: center;
+}
+
+.edit-btn{
+    border-radius: 50%;
+}
+
+.snackbar{
+    position: fixed;
+    bottom: 5px;
+    width: 70%;
+    text-align: center;
+    padding-bottom: 2px;
+}
