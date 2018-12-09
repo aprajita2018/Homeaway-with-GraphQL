@@ -37,8 +37,9 @@ var Users = mongoose.model('Users',userschema);
 module.exports = Users;
 
 //define create user
-module.exports.createUser = function(newUser){
+module.exports.createUser = function(newUser, callback){
     console.log("Inside model: user.js");
+    var user_result;
     bcrypt.hash(newUser.password, saltRounds, function(err,hash){
         //Store Hash in your password DB
         if(err){
@@ -48,10 +49,7 @@ module.exports.createUser = function(newUser){
             console.log("Inside Bcrypt function");
             newUser.password = hash;
             //newUser.save(callback);
-            Users.create(newUser)
-            .then((err, user) => {
-                return user;
-            });
+            Users.create(newUser, callback);
         }
     });
 };
