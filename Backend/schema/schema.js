@@ -1,6 +1,7 @@
 const graphql = require('graphql');
 const _ = require('lodash');
 var User = require('../models/user');
+var Property = require('../models/property');
 
 
 const {
@@ -10,7 +11,7 @@ const {
     GraphQLID,
     GraphQLInt,
     GraphQLList,
-    GraphQLNonNull
+    GraphQLNonNull,
 } = graphql;
 
 const UserType = new GraphQLObjectType({
@@ -52,39 +53,39 @@ const UserType = new GraphQLObjectType({
     })
 });
 
-// const PropertyType = new GraphQLObjectType({
-//     name: 'Property',
-//     fields: () => ({
-//         id              : { type: GraphQLID },
-//         prop_type       : { type: GraphQLString },
-//         title           : { type: GraphQLString },
-//         description     : { type: GraphQLString },
-//         owner_id        : { type: GraphQLString },
-//         numSleep        : { type: GraphQLInt },
-//         numBath         : { type: GraphQLInt },
-//         numBed          : { type: GraphQLInt },
-//         minStay         : { type: GraphQLInt },
-//         city            : { type: GraphQLString },
-//         state           : { type: GraphQLString },
-//         price           : { type: GraphQLInt },
-//         streetAdderess  : { type: GraphQLString },
-//         fromDate        : { type: GraphQLString },
-//         toDate          : { type: GraphQLString },
-//         photoURL        : { type: GraphQLString },
-//         bookings        : { 
-//             type        : BookingType,
-//             resolve(parent, args){
+const PropertyType = new GraphQLObjectType({
+    name: 'Property',
+    fields: () => ({
+        id              : { type: GraphQLID },
+        type            : { type: GraphQLString },
+        title           : { type: GraphQLString },
+        description     : { type: GraphQLString },
+        owner_id        : { type: GraphQLString },
+        numSleep        : { type: GraphQLInt },
+        numBath         : { type: GraphQLString },
+        numBed          : { type: GraphQLString },
+        minStay         : { type: GraphQLString },
+        city            : { type: GraphQLString },
+        state           : { type: GraphQLString },
+        price           : { type: GraphQLString },
+        streetAdderess  : { type: GraphQLString },
+        fromDate        : { type: GraphQLString },
+        toDate          : { type: GraphQLString },
+        photoURL        : { type: GraphQLString },
+        // bookings        : { 
+        //     type        : BookingType,
+        //     resolve(parent, args){
 
-//             } 
-//         },
-//         ownerDetails: { 
-//             type    : UserType,
-//             resolve(parent, args){
+        //     } 
+        // },
+        // ownerDetails: { 
+        //     type    : UserType,
+        //     resolve(parent, args){
 
-//             }
-//         } 
-//     })
-// });
+        //     }
+        // } 
+    })
+});
 
 // const BookingType = new GraphQLObjectType({
 //     name: 'Booking',
@@ -105,24 +106,43 @@ const RootQuery = new GraphQLObjectType({
     fields: {
         userDetails: {
             type: UserType,
-            args: { id: { type : GraphQLID }},
-            resolve(parent, args){
-                
+            args: { 
+                id: { type : GraphQLID }
+            },
+            resolve(obj, args){
+                return User.getUserById(args.id);
             }
         },
         
-        // propertyDetails: {
-        //     type: PropertyType,
-        //     args: { id: { type : GraphQLID }},
-        //     resolve(parent, args){
+        propertyDetails: {
+            type: PropertyType,
+            args: { 
+                id: { type : GraphQLID }
+            },
+            resolve(parent, args){
+                return Property.fetchProperty(args.id);
+            }
+        },
 
-        //     }
-        // },
+        searchProperties: {
+            type: new GraphQLList(PropertyType),
+            args: { 
+                city: {type: GraphQLString},
+                fromDate:   {type: GraphQLString},
+                toDate: {type: GraphQLString},
+                numSleep: {type: GraphQLInt}
+            },
+            resolve(parent, args){
+                let values = {
+                    city: args.city,
+                    fromDate: args.fromDate,
+                    toDate: args.toDate,
+                    numSleep: args.numSleep
+                };
 
-        // searchProperties: {
-        //     type: PropertyType,
-        //     args: { }
-        // }
+                return Property.searchProperties(values);
+            }
+        }
     }
 });
 
@@ -151,23 +171,7 @@ const Mutation = new GraphQLObjectType({
                     password    : args.password,
                 };
 
-                User.createUser(newUser, function(err, user){
-
-                    console.log("Inside Create User function!");
-                    if(err){
-                        console.log('Error while adding the user in db.')
-                        // res.code = "400";
-                        // res.value = "ERROR: Couldn't create the user.";
-                        // console.log(res.value);
-                        // // res.sendStatus(400).end();
-                    }
-                    else{
-                        console.log("Successfuly created the user in db!");
-                        
-                        // res.status(200).send({status: "SUCCESS", message: "User successfully created"});
-                    }; 
-
-                });
+                return User.createUser(newUser);
             }
         },
 

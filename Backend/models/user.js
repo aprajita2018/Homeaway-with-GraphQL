@@ -37,7 +37,7 @@ var Users = mongoose.model('Users',userschema);
 module.exports = Users;
 
 //define create user
-module.exports.createUser = function(newUser, callback){
+module.exports.createUser = function(newUser){
     console.log("Inside model: user.js");
     bcrypt.hash(newUser.password, saltRounds, function(err,hash){
         //Store Hash in your password DB
@@ -48,7 +48,10 @@ module.exports.createUser = function(newUser, callback){
             console.log("Inside Bcrypt function");
             newUser.password = hash;
             //newUser.save(callback);
-            Users.create(newUser,callback);
+            Users.create(newUser)
+            .then((err, user) => {
+                return user;
+            });
         }
     });
 };
@@ -61,10 +64,10 @@ module.exports.getUserByEmail = function(email, user_type, callback){
 };
 
 //define getUserbyEmail
-module.exports.getUserById = function(id, callback){
+module.exports.getUserById = function(id){
     const query = {_id : id};
     console.log(query);
-    Users.findOne(query, callback);
+    return Users.findOne(query);
 };
 
 //define compare password

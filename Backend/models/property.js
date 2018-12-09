@@ -49,31 +49,24 @@ module.exports.fetchProperties = function(id, callback){
 };
 
 //define fetch property with all the details
-module.exports.fetchProperty = function(id, callback){
+module.exports.fetchProperty = function(id){
     const query = {_id: id};
     console.log("****Inside function: fetchProperty.****");
-    Properties.findOne(query, callback)
-    // .populate(User)
-    // .exec(function(err, result){
-    //     if(err){
-    //         console.log("ERROR: " + err);
-    //         throw err;
-    //     }
-    //     console.log("Property Details: " + JSON.stringify(result));
-    //     callback(err, result);
-    // });    
+    return Properties.findOne(query);
 };
 
 
 //define fetch property with all the details
-module.exports.searchProperties = function(values, callback){
+module.exports.searchProperties = function(values){
     const query = {
         city: values.city,
-        fromDate: {$lte: values.fromDate},
-        toDate: {$gte: values.toDate},
+        // fromDate: {$lt: values.fromDate},
+        // toDate: {$gt: values.toDate},
         numSleep: {$gte: values.numSleep}
     };
-    console.log("****Inside function: searchProperties.****");
-    Properties.find(query, callback)   
+    console.log("****Inside function: searchProperties.****" + JSON.stringify(query));
+    return Properties.find(query, (err, properties)=> {
+        console.log(properties);
+    });   
 };
 
