@@ -3,6 +3,8 @@ var app = express();
 var bodyParser = require("body-parser");
 var session = require('express-session');
 var cors = require('cors');
+const graphqlHTTP = require('express-graphql');
+const schema = require('./schema/schema');
 
 var {mongoose} = require('./db/mongoose');
 
@@ -51,45 +53,17 @@ app.use(function(req, res, next){
 });
 
 
-//import the routes
+//import the route
 var loginRouter             = require('./routes/loginRouter');
-var signupRouter            = require('./routes/signupRouter');
-var userDetailsRouter       = require('./routes/userDetailsRouter');
-var updateProfileRouter     = require('./routes/updateProfileRouter');
-var logout                  = require('./routes/logout');
-var ownerDetailsRouter      = require('./routes/ownerDetailsRouter');
-var ownerPropertiesRouter   = require('./routes/ownerPropertiesRouter');
-var listingPropertyRouter   = require('./routes/listingPropertyRouter');
-var searchPropertiesRouter  = require('./routes/searchPropertiesRouter');
-var propertyDetailsRouter   = require('./routes/propertyDetailsRouter');
-var bookNowRouter           = require('./routes/bookNowRouter');
-var bookingDetailsRouter    = require('./routes/bookingDetailsRouter');
-var bookedTripsRouter       = require('./routes/bookedTripsRouter');
-var uploadFilesRouter       = require('./routes/uploadFilesRouter');
-var updateImgURLRouter      = require('./routes/updateImgURLRouter');
-var sendMessageRouter       = require('./routes/sendMessageRouter');
-var receiveMessagesRouter   = require('./routes/receiveMessagesRouter');
-var userDetailsByIDRouter     = require('./routes/userDetailsByIDRouter');
 
 //routing to different routes
 app.use('/login', loginRouter);
-app.use('/userSignup', signupRouter);
-app.use('/userDetails', userDetailsRouter);
-app.use('/updateProfile', updateProfileRouter);
-app.use('/logout', logout);
-app.use('/ownerDetails', ownerDetailsRouter);
-app.use('/ownerProperties', ownerPropertiesRouter);
-app.use('/listingProperty',listingPropertyRouter);
-app.use('/searchProperties', searchPropertiesRouter);
-app.use('/propertyDetails', propertyDetailsRouter);
-app.use('/bookNow', bookNowRouter);
-app.use('/bookingDetails', bookingDetailsRouter);
-app.use('/bookedTrips', bookedTripsRouter);
-app.use('/uploadFiles', uploadFilesRouter);
-app.use('/api/updateImageURL', updateImgURLRouter);
-app.use('/sendMessage', sendMessageRouter);
-app.use('/receiveMessages', receiveMessagesRouter);
-app.use('/userDetailsByID',userDetailsByIDRouter);
+
+//graphql route for everything other than login
+app.use("/graphql",graphqlHTTP({
+    schema,
+    graphiql: true
+}));
 
 //start the server on port 3001
 app.listen(3001);

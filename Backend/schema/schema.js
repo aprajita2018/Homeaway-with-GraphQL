@@ -47,12 +47,6 @@ const UserType = new GraphQLObjectType({
                 
             }
         }, 
-        messages    : { 
-            type    : MessageType,
-            resolve(parent, args){
-                
-            } 
-        }
     })
 });
 
@@ -113,7 +107,7 @@ const RootQuery = new GraphQLObjectType({
             resolve(parent, args){
                 
             }
-        }
+        },
 
         propertyDetails: {
             type: PropertyType,
@@ -121,7 +115,7 @@ const RootQuery = new GraphQLObjectType({
             resolve(parent, args){
 
             }
-        }
+        },
 
         searchProperties: {
             type: PropertyType,
@@ -137,21 +131,21 @@ const Mutation = new GraphQLObjectType({
         createUser: {
 
 
-        }
+        },
 
         updateUser: {
 
 
-        }
+        },
 
         bookProperty: {
 
 
-        }
+        },
     }
 });
 
-module.exports = new GraphQLScehma({
+module.exports = new GraphQLSchema({
     query: RootQuery,
     mutation: Mutation
 }); 
