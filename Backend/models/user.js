@@ -21,7 +21,7 @@ var userschema = new Schema({
     hometown            :   {type:String},
     city                :   {type:String},
     state               :   {type:String},
-    languages           :   {type:String},
+    language            :   {type:String},
     aboutMe             :   {type:String},
     joined_date         :   {type:Date},
     photoURL            :   {type:String},

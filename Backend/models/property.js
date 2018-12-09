@@ -69,9 +69,9 @@ module.exports.fetchProperty = function(id, callback){
 module.exports.searchProperties = function(values, callback){
     const query = {
         city: values.city,
-        fromDate: {$lt: values.fromDate},
-        toDate: {$gt: values.toDate},
-        numSleep: {$gt: values.numSleep}
+        fromDate: {$lte: values.fromDate},
+        toDate: {$gte: values.toDate},
+        numSleep: {$gte: values.numSleep}
     };
     console.log("****Inside function: searchProperties.****");
     Properties.find(query, callback)   
