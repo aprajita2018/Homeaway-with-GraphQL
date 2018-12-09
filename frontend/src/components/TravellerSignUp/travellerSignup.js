@@ -8,9 +8,6 @@ import { addUserMutation} from '../../mutation/mutation';
 class TravellerSignup extends Component{
     constructor(props){
         super(props);
-        this.state = {
-
-        };
     }
 
     submitForm(e){
@@ -22,19 +19,13 @@ class TravellerSignup extends Component{
         else{
             this.props.addUserMutation({
                 params: {
-                    fname: document.getElementById('fname'),
-                    lname: document.getElementById('lname'),
-                    email: document.getElementById('email'),
+                    fname   : document.getElementById('fname'),
+                    lname   : document.getElementById('lname'),
+                    email   : document.getElementById('email'),
                     password: document.getElementById('password'),
                     user_type: document.getElementById('user_type'),
                 }
             })
-            // .then((res) => {
-            //     if(res.status === 200){
-            //         console.log("Account successfully created");
-            //         window.location = "/travellerLogin";
-            //     }
-            // });
         }
     }
 
