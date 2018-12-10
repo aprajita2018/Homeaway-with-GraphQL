@@ -197,10 +197,32 @@ const Mutation = new GraphQLObjectType({
             }
         },
 
-        // bookProperty: {
-
-
-        // },
+        bookProperty: {
+            type: BookingType,
+            args: {
+                user_id        :    { type: GraphQLString },
+                property_id    :    { type: GraphQLString },
+                owner_id       :    { type: GraphQLString },
+                pricePerNight  :    { type: GraphQLInt },
+                fromDate       :    { type: GraphQLString },
+                toDate         :    { type: GraphQLString },
+                priceTotal     :    { type: GraphQLInt }
+            },
+            resolve(parent, args){
+                console.log("Inside bookProperty : " + JSON.stringify(args));
+                let newBooking = {
+                    user_id        :    args.user_id,
+                    property_id    :    args.property_id,
+                    owner_id       :    args.owner_id,
+                    pricePerNight  :    args.pricePerNight,
+                    fromDate       :    args.fromDate,
+                    toDate         :    args.toDate,
+                    priceTotal     :    args.priceTotal
+                }
+                Booking.createBooking(newBooking);
+                return newBooking;
+            }
+        },
     }
 });
 
