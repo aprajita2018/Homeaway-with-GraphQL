@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import './travellerSignup.css';
 import NavBar from '../NavBar/NavBar';
+import {Redirect} from 'react-router-dom';
 import { graphql, compose } from 'react-apollo';
 import { addUserMutation} from '../../mutation/mutation';
 
@@ -13,7 +14,8 @@ class TravellerSignup extends Component{
             l_name: '',
             email: '',
             password: '',
-            user_type: 'traveler'
+            user_type: 'traveler',
+            redirectToLogin: false
         }
     }
 
@@ -33,12 +35,24 @@ class TravellerSignup extends Component{
                     user_type   : this.state.user_type,
                 }
             })
+            .then((res) => {
+                if(res.status === 200){
+                    this.setState({
+                        redirectToLogin: true
+                    });
+                }
+            })
         }
     }
 
     render(){
+        let redirectVar = null;
+        if(this.state.redirectToLogin){
+            redirectVar = <Redirect to="/travellerlogin" />
+        }
         return(
             <div>
+                {redirectVar}
               <NavBar location={"travellerSignup"}/>
             
             {/* Signup body area */}

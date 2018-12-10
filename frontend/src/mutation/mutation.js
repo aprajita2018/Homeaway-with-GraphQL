@@ -10,12 +10,4 @@ const addUserMutation = gql`
     }
 `;
 
-const loginUserMutation = gql`
-    mutation LoginUser($user_type: String, $email: String, $password: String){
-        loginUser(user_type: $user_type, email: $email, password: $password){
-            email
-        }
-    }
-`;
-
-export {addUserMutation, loginUserMutation};
+export {addUserMutation};
