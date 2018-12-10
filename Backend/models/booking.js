@@ -28,11 +28,31 @@ module.exports.createBooking = function(newBooking, callback){
     Bookings.create(newBooking,callback);
 };
 
-//define fetch booking
-module.exports.fetchBookings =  function(id, callback){
-    const query = {user_id: id};
-    console.log("****Inside function fetchBookings.*****");
-    Bookings.find(query, callback);
+//define fetch traveller bookings
+module.exports.fetchTravellerBookings =  function(values){
+    const query = {
+        user_id: values.user_id
+    };
+    console.log("****Inside function fetchTravellerBookings.*****");
+    return Bookings.find(query);
+}
+
+//define fetch owner bookings
+module.exports.fetchOwnerBookings =  function(values){
+    const query = {
+        owner_id: values.owner_id
+    };
+    console.log("****Inside function fetchOwnerBookings.*****");
+    return Bookings.find(query);
+}
+
+//define fetch property bookings
+module.exports.fetchPropertyBookings =  function(values){
+    const query = {
+        property_id: values.property_id
+    };
+    console.log("****Inside function fetchPropertyBookings.*****");
+    return Bookings.find(query);
 }
 
 

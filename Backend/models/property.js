@@ -42,10 +42,10 @@ module.exports.listProperty = function(newProperty, callback){
 };
 
 //define fetch properties
-module.exports.fetchProperties = function(id, callback){
-    const query = {owner_id: id}
-    console.log("****Inside function : fetchProperties.****");    
-    Properties.find(query, callback);
+module.exports.fetchProperties = function(values){
+    const query = {owner_id: values.owner_id}
+    console.log("****Inside function : fetchProperties.**** for owner " + values.owner_id);    
+    return Properties.find(query);
 };
 
 //define fetch property with all the details
@@ -60,8 +60,8 @@ module.exports.fetchProperty = function(id){
 module.exports.searchProperties = function(values){
     const query = {
         city: values.city,
-        // fromDate: {$lt: values.fromDate},
-        // toDate: {$gt: values.toDate},
+        fromDate: {$lte: values.fromDate},
+        toDate: {$gte: values.toDate},
         numSleep: {$gte: values.numSleep}
     };
     console.log("****Inside function: searchProperties.****" + JSON.stringify(query));

@@ -33,24 +33,33 @@ const UserType = new GraphQLObjectType({
         aboutMe     : { type: GraphQLString },
         joined_date : { type: GraphQLString },
         photoURL    : { type: GraphQLString },
-        // tBookings   : { 
-        //     type    : BookingType,
-        //     resolve(parent, args){
-
-        //     } 
-        // },
-        // oBookings   : { 
-        //     type    : BookingType,
-        //     resolve(parent, args){
-
-        //     } 
-        // },
-        // listings    : { 
-        //     type    : PropertyType,
-        //     resolve(parent, args){
-                
-        //     }
-        // }, 
+        tBookings   : { 
+            type    : new GraphQLList(BookingType),
+            resolve(parent, args){
+                let values = {
+                    user_id: parent.id
+                };
+                return Booking.fetchTravellerBookings(values);
+            } 
+        },
+        oBookings   : { 
+            type    : new GraphQLList(BookingType),
+            resolve(parent, args){
+                let values = {
+                    owner_id: parent.id
+                };
+                return Booking.fetchOwnerBookings(values);
+            } 
+        },
+        listings    : { 
+            type    : new GraphQLList(PropertyType),
+            resolve(parent, args){
+                let values = {
+                    owner_id: parent.id
+                }
+                return Property.fetchProperties(values);
+            }
+        }, 
     })
 });
 
@@ -81,18 +90,21 @@ const PropertyType = new GraphQLObjectType({
         fromDate        : { type: GraphQLString },
         toDate          : { type: GraphQLString },
         photoURL        : { type: GraphQLString },
-        // bookings        : { 
-        //     type        : BookingType,
-        //     resolve(parent, args){
-
-        //     } 
-        // },
-        // ownerDetails: { 
-        //     type    : UserType,
-        //     resolve(parent, args){
-
-        //     }
-        // } 
+        bookings        : { 
+            type        : new GraphQLList(BookingType),
+            resolve(parent, args){
+                let values = {
+                    property_id: parent.id
+                };
+                return Booking.fetchPropertyBookings(values);
+            } 
+        },
+        ownerDetails: { 
+            type    : UserType,
+            resolve(parent, args){
+                return User.getUserById(parent.owner_id);
+            }
+        } 
     })
 });
 
@@ -184,46 +196,6 @@ const Mutation = new GraphQLObjectType({
                 return newUser;
             }
         },
-
-        // loginUser: {
-        //     type: UserType,
-        //     args: {
-        //         user_type : { type: GraphQLString },
-        //         email     : { type: GraphQLString },
-        //         password  : { type: GraphQLString },
-        //     },
-
-        //     resolve(parent, args){
-        //         console.log('Inside loginUser resolver.');
-
-        //         var user_type   = args.user_type;
-        //         var email       = args.email;
-        //         var pwd    = args.password;
-
-        //         User.getUserByEmail(email, user_type, (err, user)=> {
-        //             if(err) throw err;
-        //             if(!user){
-        //                 console.log('User not found.');
-        //             }
-        //             else{
-        //                 console.log(user);
-        //                 User.comparePassword(pwd, user.password, (err, isMatch) => {
-        //                     if(err) throw err;
-        //                     if(isMatch){
-        //                         console.log('Found User in DB!');
-
-        //                     }
-        //                 })
-
-        //             }
-        //         })
-        //     }
-        // },
-
-        // updateUser: {
-
-
-        // },
 
         // bookProperty: {
 
