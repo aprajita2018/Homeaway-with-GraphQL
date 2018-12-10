@@ -35,6 +35,7 @@ class TravellerLogin extends Component{
                 console.log("Successful login for " + this.state.email);
                 cookie.save('name', res.data.user.name);
                 cookie.save('user_type', res.data.user.user_type);
+                cookie.save('user_id', res.data.user.id);
                 localStorage.setItem('jwt_token', res.data.token);
                 this.setState({
                     redirectToHome: true

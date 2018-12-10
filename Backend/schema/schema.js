@@ -86,7 +86,7 @@ const PropertyType = new GraphQLObjectType({
         city            : { type: GraphQLString },
         state           : { type: GraphQLString },
         price           : { type: GraphQLString },
-        streetAdderess  : { type: GraphQLString },
+        streetAddress  : { type: GraphQLString },
         fromDate        : { type: GraphQLString },
         toDate          : { type: GraphQLString },
         photoURL        : { type: GraphQLString },
@@ -119,6 +119,24 @@ const BookingType = new GraphQLObjectType({
         fromDate        : { type: GraphQLString },
         toDate          : { type: GraphQLString },
         priceTotal      : { type: GraphQLInt },
+        propertyDetails :{
+            type        : PropertyType,
+            resolve(parent, args){
+                return Property.fetchProperty(parent.property_id);
+            }
+        },
+        ownerDetails    :{
+            type        : UserType,
+            resolve(parent, args){
+                return User.getUserById(parent.owner_id);
+            }
+        },
+        travelerDetails :{
+            type        :   UserType,
+            resolve(parent, args){
+                return User.getUserById(parent.user_id);
+            }
+        }
     })
 });
 

@@ -7,7 +7,12 @@ import { ApolloProvider } from 'react-apollo';
 
 // apollo client setup
 const client = new ApolloClient({
-  uri: 'http://localhost:8080/graphql'
+  uri: 'http://localhost:8080/graphql',
+  connectToDevTools: true,
+  onError: ({ networkError, graphQLErrors }) => {
+    console.log('graphQLErrors', graphQLErrors)
+    console.log('networkError', networkError)
+  }
 });
 
 

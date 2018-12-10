@@ -33,7 +33,7 @@ module.exports.fetchTravellerBookings =  function(values){
     const query = {
         user_id: values.user_id
     };
-    console.log("****Inside function fetchTravellerBookings.*****");
+    console.log("****Inside function fetchTravellerBookings.***** for traveler id : " + values.user_id);
     return Bookings.find(query);
 }
 

@@ -7,32 +7,26 @@ import BookedTrips from '../BookedTrips/BookedTrips';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
 
+import {getTravellerTrips} from '../../queries/queries';
+import { compose, graphql } from 'react-apollo';
+
 class TravelerTrips extends Component{
-    constructor(props){
-        super(props);
-        this.state = {
-            ids: [],
-            name: cookie.load('name'),
-            user_type: cookie.load('user_type'),
-        };
-    }
-
-    componentDidMount(){
-        axios.get('/bookedTrips')
-        .then((res) => {
-            console.log(res.data);
-            this.setState({
-                ids: this.state.ids.concat(res.data),
+    
+    displayTrips(){
+        var data = this.props.data;
+        if(data.loading){
+            return (<div>Loading your past trips...</div>);
+        }
+        else{
+            return data.userDetails.tBookings.map(booking =>{
+                return(
+                <BookedTrips key={booking.id} booking={booking} />
+                );
             });
-        });
+            //return (<div>{JSON.stringify(data)}</div>)
+        }
     }
-
     render(){
-        let bookings = this.state.ids.map(id =>{
-            return(
-                <BookedTrips booking_id = {id.booking_id} />
-            )
-        })
         let redirectVar = null;
         if(cookie.load('user_type') !== 'traveler'){
             redirectVar = <Redirect to="/travellerLogin" />;
@@ -45,7 +39,7 @@ class TravelerTrips extends Component{
                 <div className="d-block w-100">
                     <h3 className="mt-3 font-weight-bold text-info">My trips dashboard</h3>
                     <div id="my_trips" className="container">
-                        {bookings}
+                        {this.displayTrips()}
                     </div>
                 </div>
             </div>
@@ -53,4 +47,8 @@ class TravelerTrips extends Component{
     }
 }
 
-export default TravelerTrips;
+export default graphql(getTravellerTrips, {
+    options: () => ({ variables: { id: cookie.load('user_id') }}),
+    },
+    {name: "getTravellerTrips"}
+)(TravelerTrips);

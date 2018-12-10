@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import { throwServerError } from 'apollo-link-http-common';
 
 class BookedTrips extends Component{
     constructor(props){
@@ -7,47 +8,25 @@ class BookedTrips extends Component{
         
         //initialize the state
         this.state = {
-            id: this.props.booking_id,
+            id: this.props.booking.id,
             isLoading: false,
-            photoURL: null,
+            photoURL: this.props.booking.propertyDetails.photoURL,
+            owner_id: this.props.booking.owner_id,
+            pricePerNight: this.props.booking.pricePerNight,
+            fromDate: this.props.booking.fromDate,
+            toDate: this.props.booking.toDate,
+            priceTotal: this.props.booking.priceTotal,
+            title: this.props.booking.propertyDetails.title,
+            description: this.props.booking.propertyDetails.description,
+            type: this.props.booking.propertyDetails.type,
+            numSleep: this.props.booking.propertyDetails.numSleep,
+            numBath: this.props.booking.propertyDetails.numBath,
+            numBed: this.props.booking.propertyDetails.numBed,
+            minStay: this.props.booking.propertyDetails.minStay,
+            streetAddress: this.props.booking.propertyDetails.streetAddress,
+            city: this.props.booking.propertyDetails.city,
+            state: this.props.booking.propertyDetails.state,
         }
-    }
-    
-    componentDidMount(){
-        this.setState({
-            isLoading:true,
-        });
-
-        //fetching the booking details from the backend
-        axios.get('/bookingDetails', {
-            params: {
-                id: this.state.id
-            }
-        })
-        .then((res) =>{
-            console.log(res.data);
-            this.setState({
-                isLoading: false,
-            });
-            this.setState({
-                owner_id: res.data.owner_id,
-                pricePerNight: res.data.pricePerNight,
-                fromDate: res.data.fromDate.substring(0,10),
-                toDate: res.data.toDate.substring(0,10),
-                priceTotal: res.data.priceTotal,
-                photoURL: res.data.photoURL,
-                title: res.data.title,
-                description: res.data.description,
-                type: res.data.type,
-                numSleep: res.data.numSleep,
-                numBath: res.data.numBath,
-                numBed: res.data.numBed,
-                minStay: res.data.minStay,
-                streetAddress: res.data.streetAddress,
-                city: res.data.city,
-                state: res.data.state,
-            })
-        })
     }
 
     render(){
