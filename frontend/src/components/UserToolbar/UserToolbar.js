@@ -18,6 +18,9 @@ class UserToolbar extends Component{
                     <li className="nav-item">
                         <a className={this.props.tab === 'mytrips'? "nav-link active" : "nav-link"} href={this.state.user_type === 'traveler' ? "./TravelerTrips" : "./OwnerProperties"}>{this.state.user_type === 'traveler' ? "My Trips" : "My Properties"}</a>
                     </li>
+                    <li className="nav-item" style={{display: this.state.user_type === 'owner' ? 'block': 'none'}}>
+                        <a className={this.props.tab === 'mybookings'? "nav-link active" : "nav-link"} href="./OwnerBookings">My Bookings</a>
+                    </li>
                     <li className="nav-item">
                         <a className={this.props.tab === 'profile'? "nav-link active" : "nav-link"} href="./userProfile">Profile</a>
                     </li>

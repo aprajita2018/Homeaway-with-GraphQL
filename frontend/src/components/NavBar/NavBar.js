@@ -98,6 +98,7 @@ class NavBarLoggedIn extends Component{
                                 :
                                 <a className="dropdown-item" href="/TravelerTrips">My Trips</a>
                                 }
+                                <a className="dropdown-item" style={{display: this.state.user_type === 'owner'? 'block' : 'none'}} href="/OwnerBookings">My Bookings</a>
                                 <a className="dropdown-item" href="/userProfile">Profile</a>
                                 <a className="dropdown-item" onClick={this.handleLogout}>Log Out</a>
                             </div>
