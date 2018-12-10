@@ -25,8 +25,7 @@ router.post('*', (req, res, next) =>{
                     const token = jwt.sign(user.toJSON(), config.secret,{
                         expiresIn: 24*60*60
                     });
-                    console.log("Found the user in DB!");
-                    res.cookie('name',user.f_name + " " + user.l_name,{maxAge: 900000, httpOnly: false, path : '/'});           
+                    console.log("Found the user in DB!");          
                     res.status(200).send({
                         success: true,
                         status: "SUCCESS",

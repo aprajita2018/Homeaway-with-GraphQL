@@ -11,8 +11,9 @@ class TravellerLogin extends Component{
         super(props);
         this.state = {
             name: null,
-            type: null,
+            type: 'traveler',
             email: null,
+            redirectToHome: false
         };
         this.handleLogin = this.handleLogin.bind(this);
     }
@@ -24,26 +25,27 @@ class TravellerLogin extends Component{
         });
         axios.post(BACKEND_HOST + '/login', {
             params: {
-                email: document.getElementById('inputEmail'),
-                password: document.getElementById('inputPassword'),
-                user_type: document.getElementById('user_type'),
+                email: this.state.email,
+                password: this.state.password,
+                user_type: this.state.type,
             }
         })
         .then((res) => {
             if(res.status === 200){
                 console.log("Successful login for " + this.state.email);
+                cookie.save('name', res.data.user.name);
+                cookie.save('user_type', res.data.user.user_type);
+                localStorage.setItem('jwt_token', res.data.token);
                 this.setState({
-                    name: cookie.load('name'),
-                    type: cookie.load('user_type'),
+                    redirectToHome: true
                 });
-                window.location = "/";
             }
         });
     }
 
     render(){
         let redirectVar = null;
-        if(cookie.load('user_type') === 'traveler'){
+        if(this.state.redirectToHome){
             redirectVar = <Redirect to="/" />;
         }
         return(
@@ -67,13 +69,12 @@ class TravellerLogin extends Component{
                             <div className="login-form mt-4">
                                 <form>
                                     <div className="form-row">
-                                    <div className="form-group col-md-12">
-                                        <input id="inputEmail" name="email" placeholder="Email Address" className="form-control" type="text" required/>
-                                    </div>
-                                    <div className="form-group col-md-12">
-                                        <input id="inputPassword" type="password" className="form-control" name="password" placeholder="Password" required/>
-                                    </div>
-                                    <input type="hidden" name="user_type" id="user_type" value="traveler" />
+                                        <div className="form-group col-md-12">
+                                            <input id="inputEmail" name="email" placeholder="Email Address" className="form-control" type="text" onChange={ (e) => this.setState({ email: e.target.value })} required/>
+                                        </div>
+                                        <div className="form-group col-md-12">
+                                            <input id="inputPassword" type="password" className="form-control" name="password" placeholder="Password" onChange={ (e) => this.setState({ password: e.target.value })} required/>
+                                        </div>
                                     </div>
                                     <div className="login-forgot text-left mt-2">
                                         <a href="#">Forgot Password? </a><br/><br/>

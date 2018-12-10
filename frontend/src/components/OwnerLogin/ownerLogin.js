@@ -14,6 +14,7 @@ class OwnerLogin extends Component{
             email: '',
             password:'',
             user_type:'owner',
+            redirectToHome: false
         };
         this.handleLogin = this.handleLogin.bind(this);
     }
@@ -32,18 +33,19 @@ class OwnerLogin extends Component{
         .then((res) => {
             if(res.status === 200){
                 console.log("Successful login for " + this.state.email);
+                cookie.save('name', res.data.user.name);
+                cookie.save('user_type', res.data.user.user_type);
+                localStorage.setItem('jwt_token', res.data.token);
                 this.setState({
-                    name: cookie.load('name'),
-                    type: cookie.load('user_type'),
+                    redirectToHome: true
                 });
-                window.location = "/";
             }
         });
     }
 
     render(){
         let redirectVar = null;
-        if(cookie.load('user_type') === 'owner'){
+        if(this.state.redirectToHome){
             redirectVar = <Redirect to="/" />;
         }
         return(
@@ -58,15 +60,14 @@ class OwnerLogin extends Component{
                                 <h5 className="text-info font-weight-light border-bottom">Need an account? <a href="./ownerSignup">Sign Up</a></h5>
                             </div>
                             <div className="login-form mt-4">
-                                <form method="POST" >
+                                <form>
                                     <div className="form-row">
-                                    <div className="form-group col-md-12">
-                                        <input id="inputEmail" name="email" placeholder="Email Address" className="form-control" type="email" onChange={ (e) => this.setState({ email: e.target.value })} required/>
-                                    </div>
-                                    <div className="form-group col-md-12">
-                                        <input type="password" className="form-control" id="inputPassword" name="password" placeholder="Password" onChange={ (e) => this.setState({ password: e.target.value })} required/>
-                                    </div>
-                                    <input type="hidden" name="user_type" id="user_type" value="owner" />
+                                        <div className="form-group col-md-12">
+                                            <input id="inputEmail" name="email" placeholder="Email Address" className="form-control" type="email" onChange={ (e) => this.setState({ email: e.target.value })} required/>
+                                        </div>
+                                        <div className="form-group col-md-12">
+                                            <input type="password" className="form-control" id="inputPassword" name="password" placeholder="Password" onChange={ (e) => this.setState({ password: e.target.value })} required/>
+                                        </div>
                                     </div>
                                     <div className="text-left mt-2">
                                         <a href="#">Forgot Password? </a><br/><br/>

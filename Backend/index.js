@@ -55,9 +55,11 @@ app.use(function(req, res, next){
 
 //import the route
 var loginRouter             = require('./routes/loginRouter');
+var logoutRouter = require('./routes/logout');
 
 //routing to different routes
 app.use('/login', loginRouter);
+app.use('/logout', logoutRouter);
 
 //graphql route for everything other than login
 app.use("/graphql",graphqlHTTP({

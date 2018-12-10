@@ -2,6 +2,7 @@ import React,{Component} from 'react';
 import './NavBar.css';
 import cookie from 'react-cookies';
 import axios from 'axios';
+import {BACKEND_HOST} from '../../actions/host_config';
 
 class NavBar extends Component {
     constructor(props){
@@ -50,7 +51,8 @@ class NavBarLoggedIn extends Component{
     }
 
     handleLogout = () => {
-        axios.post("/logout")
+        const token = localStorage.getItem('jwt_token');
+        axios.post(BACKEND_HOST + "/logout", {}, {headers:{Authorization: 'Bearer ' + token}})
         .then((res) => {
             if(res.status === 200){
                 cookie.remove('name');
@@ -58,6 +60,7 @@ class NavBarLoggedIn extends Component{
                 this.setState({
                     isLoggedIn: false,
                 });
+                localStorage.removeItem('jwt_token');
                 window.location = "/";
             }
         });
