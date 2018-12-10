@@ -122,7 +122,7 @@ class PropertyDetails extends Component{
         var a = document.getElementById('booking_from').value;
         var b = document.getElementById('booking_until').value;
         var c = this.state.price;
-        if(a != "" && b!= ""){
+        if(a !== "" && b!== ""){
             var d1 = new Date(a);
             var d2 = new Date(b);
             var totalPrice =  ((d2-d1)/(1000*60*60*24)) *c;

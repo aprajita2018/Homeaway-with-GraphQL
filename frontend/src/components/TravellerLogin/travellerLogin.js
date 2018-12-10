@@ -17,7 +17,8 @@ class TravellerLogin extends Component{
         this.handleLogin = this.handleLogin.bind(this);
     }
 
-    handleLogin = () => {
+    handleLogin = (e) => {
+        e.preventDefault();
         this.setState({
             email:  document.getElementById('inputEmail'),
         });
@@ -64,7 +65,7 @@ class TravellerLogin extends Component{
                                 <h4>Account Login</h4>
                             </div>
                             <div className="login-form mt-4">
-                                <form method="POST" action="/login">
+                                <form>
                                     <div className="form-row">
                                     <div className="form-group col-md-12">
                                         <input id="inputEmail" name="email" placeholder="Email Address" className="form-control" type="text" required/>

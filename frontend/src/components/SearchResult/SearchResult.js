@@ -52,7 +52,7 @@ class SearchResult extends Component{
             <div className="container bg-light my-2 py-2 searchResultPanel">
                 <div className="card flex-row my-2">
                     <div className="loadingOverlay w-100 h-100" style={{position:"absolute", 'z-index':"2024", display: this.state.isLoading ? 'block' : 'none'}}>
-                        <img src="img/loading_spinner.gif" style={{width:"60px", height:"60px", 'margin-left':"auto", 'margin-right':"auto", 'vertical-align':"middle", display:"block"}}/>
+                        <img src="img/loading_spinner.gif" alt="Loading..." style={{width:"60px", height:"60px", 'margin-left':"auto", 'margin-right':"auto", 'vertical-align':"middle", display:"block"}}/>
                     </div>
                     <div className="card-header border-0">
                         <img src={this.state.photoURL === null ? "" : this.state.photoURL.split(";")[0]} alt="property_image" width="200px"/>

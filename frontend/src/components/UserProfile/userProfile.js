@@ -108,7 +108,7 @@ class TravellerProfile extends Component{
                         <div className= "container col-md-5  mt-4 pt-4">
                             <div className="profile-photo text-center" >
                                 <div className="align-center">
-                                    <img className="rounded-circle" src={this.state.photoURL === null? "img/profile-clipart.jpg" : this.state.photoURL} height="80px" width="80px" alt="profile photo"/>
+                                    <img className="rounded-circle" src={this.state.photoURL === null? "img/profile-clipart.jpg" : this.state.photoURL} height="80px" width="80px" alt="profile"/>
                                 </div>
                                 <input 
                                     type = "file"
