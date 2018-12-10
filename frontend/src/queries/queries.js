@@ -1,7 +1,7 @@
 import { gql } from 'apollo-boost';
 
 export const getSearchProperties = gql`
-    {
+    query getSearchProperties($city: String!, $fromDate: String!, $toDate: String!, $numSleep: Int!){
         searchProperties(city: $city, fromDate: $fromDate, toDate: $toDate, numSleep: $numSleep) {
             property_id
             owner_id
@@ -16,8 +16,8 @@ export const getSearchProperties = gql`
 `;
 
 export const getTravellerTrips = gql`
-    {
-        userDetails(id: "5bd96147425c3961cc24f7f2") {
+    query getTravellerTrips($id: ID!){
+        userDetails(id: $id) {
             email
             tBookings{
                 id

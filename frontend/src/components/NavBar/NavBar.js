@@ -57,6 +57,7 @@ class NavBarLoggedIn extends Component{
             if(res.status === 200){
                 cookie.remove('name');
                 cookie.remove('user_type');
+                cookie.remove('user_id');
                 this.setState({
                     isLoggedIn: false,
                 });
