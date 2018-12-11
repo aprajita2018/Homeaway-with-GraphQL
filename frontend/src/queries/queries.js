@@ -1,8 +1,8 @@
 import { gql } from 'apollo-boost';
 
 export const getUserDetails = gql`
-    query getUserDetails($email: String!){
-        getUserDetails(email : $email){
+    query getUserDetails($id: ID!){
+        userDetails(id : $id){
             f_name
             l_name
             gender

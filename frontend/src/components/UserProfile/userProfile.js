@@ -50,25 +50,30 @@ class TravellerProfile extends Component{
         });
     }
 
-    // componentDidMount () {
-    //     axios.get('/userDetails')
-    //     .then((res) => {
-    //         console.log(res.data);
-    //         this.setState({
-    //             fname: res.data.f_name,
-    //             lname: res.data.l_name,
-    //             email: res.data.email,
-    //             phone: res.data.phone_num,
-    //             city: res.data.city,
-    //             state: res.data.state,
-    //             aboutMe: res.data.aboutMe,
-    //             hometown: res.data.hometown,
-    //             languages: res.data.languages,
-    //             gender: res.data.gender,
-    //             photoURL: res.data.photoURL,
-    //         });
-    //     });
-    // }
+    fetchDetails(){
+        var data = this.props.data;
+        if(data.loading){
+            return(<div>Loading your details...</div>);
+        }
+        else{
+            // this.setState({
+            //     fname: data.userDetails.f_name,
+            //     lname: data.userDetails.l_name,
+            //     email: data.userDetails.email,
+            //     phone: data.userDetails.phone_num,
+            //     city: data.userDetails.city,
+            //     state: data.userDetails.state,
+            //     aboutMe: data.userDetails.aboutMe,
+            //     hometown: data.userDetails.hometown,
+            //     languages: data.userDetails.languages,
+            //     gender: data.userDetails.gender,
+            // });
+            return "Your details...";
+        }
+    }
+    componentDidMount () {
+        this.fetchDetails();
+    }
 
     render(){
         let redirectVar = null;
@@ -103,9 +108,10 @@ class TravellerProfile extends Component{
                             <div className="container col-md-5  mt-3 pt-3 border rounded">
                                 <div className= "profile-details ">
                                     <h3>Profile Information</h3><br/>
+                                    {this.fetchDetails()}
                                     {/* <form class="profiledetails" id="input_updateForm" method="post" action="/updateProfile"> */}
                                         <div class="form-group col-md-10">
-                                            <input id="input_fname" name="fname" class="form-control" defaultValue={this.state.fname} type="text" placeholder="First Name"/>
+                                            <input id="input_fname" name="fname" class="form-control" defaultValue={this.props} type="text" placeholder="First Name"/>
                                         </div>
                                         <div class="form-group col-md-10">
                                             <input id="input_lname" name="lname" class="form-control" defaultValue={this.state.lname} type="text" placeholder="Last Name"/>
@@ -160,10 +166,18 @@ class TravellerProfile extends Component{
     }
 }
 
-export default compose(graphql(updateUserMutation, { name: "updateUserMutation" }))
-graphql(getUserDetails, {
-    options: () => ({ variables: { email: cookie.load('email') }}),
-    },
-    {name: "getUserDetails"}
-)
- (TravellerProfile);
+// export default compose(
+//     // graphql(updateUserMutation, 
+//     //     { name: "updateUserMutation" }
+//     // ),
+//     graphql(getUserDetails, {
+//     options: () => ({ variables: { id: cookie.load('user_id') }}),
+//     }, {name: "getUserDetails"}
+//     )
+// )(TravellerProfile);
+
+export default graphql(
+    getUserDetails, {
+        options: () => ({ variables: { id: cookie.load('user_id') }}),
+        }, {name: "getUserDetails"}
+)(TravellerProfile)
