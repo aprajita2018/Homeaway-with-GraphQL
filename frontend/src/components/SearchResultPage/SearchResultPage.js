@@ -44,8 +44,8 @@ class SearchResultPage extends Component{
             <div>
                 <NavBar location="SearchResultPage" />
                 <div id="searchResultList" className="mt-5 pt-5">
+                    <SearchBar />
                     {this.displayProperties()}
-                {/* <SearchBar /> */}
                 {/* {this.state.ids.length === 0 ? "None of the properties matched the search criteria. Please try with a different search criteria.": properties} */}
                 </div>
             </div>

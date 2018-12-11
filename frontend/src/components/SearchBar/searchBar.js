@@ -69,6 +69,16 @@ class SearchBar extends Component{
     }
 }
 
-export default compose(
-    graphql(getSearchProperties, { name: "getSearchProperties" })
-)(SearchBar);
+// export default graphql(
+//     getSearchProperties, {
+//         variables: {
+//             city: null,
+//             fromDate: null,
+//             toDate: null,
+//             numSleep: null
+//         }
+//     },
+//     { name: "getSearchProperties" }
+// )(SearchBar);
+
+export default SearchBar;
