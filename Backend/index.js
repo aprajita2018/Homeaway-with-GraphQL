@@ -27,7 +27,7 @@ cloudinary.config({
   });
 
 //use cors for cross origin resourse sharing
-app.use(cors({origin: '*', credentials: true}));
+app.use(cors({origin: '*', credentials: false}));
 //app.use(cors({origin: 'http://ec2-13-56-229-63.us-west-1.compute.amazonaws.com:3000', credentials: true}));
 
 app.use(bodyParser.urlencoded({ extended: false }));
