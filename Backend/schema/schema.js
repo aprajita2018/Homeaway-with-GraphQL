@@ -149,6 +149,7 @@ const RootQuery = new GraphQLObjectType({
                 id: { type : GraphQLID }
             },
             resolve(obj, args){
+                console.log('Inside RootQueryType > getUserByID query resolver');
                 return User.getUserById(args.id);
             }
         },
@@ -159,6 +160,7 @@ const RootQuery = new GraphQLObjectType({
                 id: { type : GraphQLID }
             },
             resolve(parent, args){
+                console.log('Inside RootQueryType > fetchProperty query resolver');
                 return Property.fetchProperty(args.id);
             }
         },
@@ -178,7 +180,7 @@ const RootQuery = new GraphQLObjectType({
                     toDate: args.toDate,
                     numSleep: args.numSleep
                 };
-
+                console.log('Inside RootQueryType > searchProperties query resolver');
                 return Property.searchProperties(values);
             }
         },
@@ -192,7 +194,7 @@ const RootQuery = new GraphQLObjectType({
                 let values = {
                     ids: args.ids
                 };
-
+                console.log('Inside RootQueryType > fetchPropertyDetailsByIDs query resolver');
                 return Property.fetchPropertiesByIDs(values);
             }
         }
@@ -215,7 +217,7 @@ const Mutation = new GraphQLObjectType({
             },
 
             resolve(parent, args){
-                console.log('Inside addUser resolver.');
+                console.log('Inside Mutation > addUser resolver.');
 
                 let newUser = {
                     user_type   : args.user_type,
@@ -226,6 +228,41 @@ const Mutation = new GraphQLObjectType({
                 };
                 User.createUser(newUser);
                 return newUser;
+            }
+        },
+
+        updateUser: {
+            type: UserType,
+            args: {
+                user_id   : { type: GraphQLString },
+                f_name    : { type: GraphQLString },
+                l_name    : { type: GraphQLString },
+                gender    : { type: GraphQLString },
+                phone_num : { type: GraphQLString },
+                hometown  : { type: GraphQLString },
+                city      : { type: GraphQLString },
+                state     : { type: GraphQLString },
+                language  : { type: GraphQLString },
+                aboutMe   : { type: GraphQLString },
+            },
+
+            resolve(parent, args){
+                console.log('Inside Mutation > updateUser resolver.');
+
+                let user = {
+                    user_id     : args.user_id,
+                    f_name      : args.f_name,
+                    l_name      : args.l_name,
+                    phone_num   : args.phone_num,
+                    gender      : args.gender,
+                    hometown    : args.hometown,
+                    city        : args.city,
+                    state       : args.state,
+                    language    : args.language,
+                    aboutMe     : args.aboutMe
+                };
+                User.updateProfile(user_id, user);
+                return user;
             }
         },
 
@@ -241,7 +278,7 @@ const Mutation = new GraphQLObjectType({
                 priceTotal     :    { type: GraphQLInt }
             },
             resolve(parent, args){
-                console.log("Inside bookProperty : " + JSON.stringify(args));
+                console.log("Inside Mutation > bookProperty : " + JSON.stringify(args));
                 let newBooking = {
                     user_id        :    args.user_id,
                     property_id    :    args.property_id,

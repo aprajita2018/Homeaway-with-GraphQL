@@ -1,5 +1,21 @@
 import { gql } from 'apollo-boost';
 
+export const getUserDetails = gql`
+    query getUserDetails($email: String!){
+        getUserDetails(email : $email){
+            f_name
+            l_name
+            gender
+            phone_num
+            city
+            state
+            hometown
+            aboutMe
+            language
+        }
+    }
+`;
+
 export const getSearchProperties = gql`
     query getSearchProperties($city: String!, $fromDate: String!, $toDate: String!, $numSleep: Int!){
         searchProperties(city: $city, fromDate: $fromDate, toDate: $toDate, numSleep: $numSleep) {

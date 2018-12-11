@@ -3,8 +3,10 @@ import './userProfile.css';
 import NavBar from '../NavBar/NavBar';
 import UserToolbar from '../UserToolbar/UserToolbar';
 import cookie from 'react-cookies';
-import axios from 'axios';
 import {Redirect} from 'react-router';
+import { graphql, compose } from 'react-apollo';
+import { updateUserMutation } from '../../mutation/mutation';
+import { getUserDetails} from '../../queries/queries';
 
 class TravellerProfile extends Component{
 
@@ -14,84 +16,59 @@ class TravellerProfile extends Component{
             name: cookie.load('name'),
             user_type: cookie.load('user_type'),
             photoURL: null,
+            f_name: '',
+            l_name: '',
+            gender: '',
+            phone_num: '',
+            aboutMe: '',
+            city: '',
+            state: '',
+            hometown: '',
+            language: '',
         };
         this.handleSave = this.handleSave.bind(this);
-        this.fileUploadHandler = this.fileUploadHandler.bind(this);
+        // this.fileUploadHandler = this.fileUploadHandler.bind(this);
     }
 
-    fileUploadHandler(e){
-        const data = new FormData();
-
-        data.append('images', e.target.files[0]);
-        axios.post('/uploadFiles',data)
-        .then((res) => {
-            if(res.status === 200){
-                console.log("File successfully uploaded : " + res.data);
-                this.setState({
-                    photoURL: res.data.fileUrl,
-                })
-            }
-            else{
-                console.log("Something went wrong: " + res.data);
-            }
-        })
-    }
 
     handleSave = (e) =>{
-        axios.post('/updateProfile', {
-            params: {
-                fname: document.getElementById('input_fname').value,
-                lname: document.getElementById('input_lname').value,
-                email: document.getElementById('input_email').value,
-                phone: document.getElementById('input_phone').value,
-                aboutMe: document.getElementById('input_aboutMe').value,
-                city: document.getElementById('input_city').value,
-                state: document.getElementById('input_state').value,
-                hometown: document.getElementById('input_hometown').value,
-                languages: document.getElementById('input_languages').value,
-                gender: document.getElementById('profileGender').value,
-                photoURL: this.state.photoURL,
-            }            
-        })
-        .then((res) =>{
-            if(res.status === 200){
-                console.log("Successful update!");
-                document.getElementById("success_text").innerHTML = "Successfully updated your profile!";
-                document.getElementById("success_snackbar").style.setProperty('display', 'block'); 
-                setTimeout(() => {
-                    document.getElementById("success_snackbar").style.setProperty('display', 'none');
-                }, 10000);              
-            }
-            else{
-                console.log("Err in updating the user profile.");
-                document.getElementById("alert_text").innerHTML = "ERROR: Could not update your profile.";
-                document.getElementById("alert_snackbar").style.setProperty('display', 'block');
-                setTimeout(() => {
-                    document.getElementById("alert_snackbar").style.setProperty('display', 'none');
-                }, 2000);
-            }
-        })
-    }
+        e.preventDefault();
+        this.props.updateUserMutation({
+            variables: {
+                user_id     : cookie.load('user_id'),
+                f_name      : this.state.f_name,
+                l_name      : this.state.l_name,
+                gender      : this.state.gender,
+                phone_num   : this.state.phone_num,
+                aboutMe     : this.state.aboutMe,
+                city        : this.state.city,
+                state       : this.state.state,
+                hometown    : this.state.hometown,
+                language    : this.state.language,
 
-    componentDidMount () {
-        axios.get('/userDetails')
-        .then((res) => {
-            console.log(res.data);
-            this.setState({
-                fname: res.data.f_name,
-                lname: res.data.l_name,
-                email: res.data.email,
-                phone: res.data.phone_num,
-                city: res.data.city,
-                state: res.data.state,
-                aboutMe: res.data.aboutMe,
-                hometown: res.data.hometown,
-                languages: res.data.languages,
-                gender: res.data.gender,
-                photoURL: res.data.photoURL,
-            });
+            }
         });
     }
+
+    // componentDidMount () {
+    //     axios.get('/userDetails')
+    //     .then((res) => {
+    //         console.log(res.data);
+    //         this.setState({
+    //             fname: res.data.f_name,
+    //             lname: res.data.l_name,
+    //             email: res.data.email,
+    //             phone: res.data.phone_num,
+    //             city: res.data.city,
+    //             state: res.data.state,
+    //             aboutMe: res.data.aboutMe,
+    //             hometown: res.data.hometown,
+    //             languages: res.data.languages,
+    //             gender: res.data.gender,
+    //             photoURL: res.data.photoURL,
+    //         });
+    //     });
+    // }
 
     render(){
         let redirectVar = null;
@@ -183,4 +160,10 @@ class TravellerProfile extends Component{
     }
 }
 
-export default TravellerProfile;
+export default compose(graphql(updateUserMutation, { name: "updateUserMutation" }))
+graphql(getUserDetails, {
+    options: () => ({ variables: { email: cookie.load('email') }}),
+    },
+    {name: "getUserDetails"}
+)
+ (TravellerProfile);
