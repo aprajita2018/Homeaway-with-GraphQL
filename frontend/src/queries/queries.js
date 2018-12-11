@@ -85,6 +85,36 @@ export const getOwnerBookings = gql`
     }
 `;
 
+export const getOwnerProperties = gql`
+    query getOwnerProperties($id: ID!) {
+        userDetails(id: $id){
+            id
+            listings{
+                id
+                type
+                title
+                description
+                owner_id
+                numSleep
+                numBath
+                numBed
+                minStay
+                city
+                state
+                price
+                streetAddress
+                fromDate
+                toDate
+                photoURL
+                ownerDetails {
+                    id
+                    email
+                }
+            }
+        }
+    }
+`;
+
 export const getPropertyDetails = gql`
     query getPropertyDetails($id: String!){
         propertyDetails(id: $id){

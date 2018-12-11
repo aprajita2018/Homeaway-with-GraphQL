@@ -6,7 +6,7 @@ class SearchResult extends Component{
     constructor(props){
         super(props);
         this.state = {
-            id: this.props.propertyId,
+            id: this.props.property.id,
             isLoading: false,
             title: this.props.property.title,
             type: this.props.property.type,
@@ -26,40 +26,6 @@ class SearchResult extends Component{
         }
     }
 
-    // componentDidMount(){
-    //     this.setState({
-    //         isLoading: true,
-    //     });
-
-    //     axios.get('/propertyDetails', {
-    //         params: {
-    //         id: this.state.id
-    //         }
-    //     })
-    //     .then((res) => {
-    //         console.log(res.data);
-    //         this.setState({
-    //             isLoading: false,
-    //         });
-    //         this.setState({
-    //             title: res.data.title,
-    //             type: res.data.type,
-    //             description: res.data.description,
-    //             price: res.data.price,
-    //             numSleep: res.data.numSleep,
-    //             numBed: res.data.numBed,
-    //             numBath: res.data.numBath,
-    //             minStay: res.data.minStay,
-    //             city: res.data.city,
-    //             owner_id: res.data.owner_id,
-    //             streetAddress: res.data.streetAddress,
-    //             state: res.data.state,
-    //             fromDate: res.data.fromDate,
-    //             toDate: res.data.toDate,
-    //             photoURL: res.data.photoURL,
-    //         });
-    //     })
-    // }
 
     render(){
         return(

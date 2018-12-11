@@ -6,31 +6,25 @@ import axios from 'axios';
 import {Redirect} from 'react-router';
 import cookie from 'react-cookies';
 
-class OwnerProperties extends Component{
-    constructor(props){
-        super(props);        
-        this.state = {
-            ids : [],
-            user_type: cookie.load('user_type'),
-        };
-    }
+import {getOwnerProperties} from '../../queries/queries';
+import { compose, graphql } from 'react-apollo';
 
-    componentDidMount () {
-        axios.get('/ownerProperties')
-        .then((res) =>{
-            console.log(res.data);
-            this.setState({
-                ids: this.state.ids.concat(res.data),
-            })
-        })
+class OwnerProperties extends Component{
+    displayProperties(){
+        var data = this.props.data;
+        if(data.loading){
+            return (<div>Loading your Properties...</div>);
+        }
+        else{
+            return data.userDetails.listings.map(property =>{
+                return(
+                <SearchResult key={property.id} property={property} />
+                );
+            });
+        }
     }
 
     render(){
-        let properties = this.state.ids.map(id => {
-            return(
-                <SearchResult propertyId = {id.property_id}/>
-            )
-        })
         let redirectVar = null;
         if(cookie.load('user_type') !== 'owner'){
             redirectVar = <Redirect to="/ownerLogin" />;
@@ -43,7 +37,7 @@ class OwnerProperties extends Component{
                 <div className="d-block w-100">
                     <h2 className="mt-3 font-weight-bold">My Properties</h2>
                     <div id="my_properties" className="container">
-                        {properties}
+                        {this.displayProperties()}
                     </div>
                 </div>
             </div>
@@ -51,4 +45,8 @@ class OwnerProperties extends Component{
     }
 }
 
-export default OwnerProperties;
+export default graphql(getOwnerProperties, {
+    options: () => ({ variables: { id: cookie.load('user_id') }}),
+    },
+    {name: "getOwnerProperties"}
+)(OwnerProperties);
