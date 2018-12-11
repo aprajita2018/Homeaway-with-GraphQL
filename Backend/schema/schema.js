@@ -181,6 +181,20 @@ const RootQuery = new GraphQLObjectType({
 
                 return Property.searchProperties(values);
             }
+        },
+
+        fetchPropertyDetailsByIDs: {
+            type: new GraphQLList(PropertyType),
+            args: {
+                ids: {type: GraphQLList(GraphQLString)}
+            },
+            resolve(parent, args){
+                let values = {
+                    ids: args.ids
+                };
+
+                return Property.fetchPropertiesByIDs(values);
+            }
         }
     }
 });

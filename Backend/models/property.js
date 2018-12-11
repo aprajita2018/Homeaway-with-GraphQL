@@ -70,3 +70,14 @@ module.exports.searchProperties = function(values){
     });   
 };
 
+//define fetch property by IDs with all the details
+module.exports.fetchPropertiesByIDs = function(values){
+    const query = {
+        _id: {$in: values.ids}
+    };
+    console.log("****Inside function: fetchPropertyDetailsByIDs.****" + JSON.stringify(query));
+    return Properties.find(query, (err, properties)=> {
+        console.log(properties);
+    });   
+};
+

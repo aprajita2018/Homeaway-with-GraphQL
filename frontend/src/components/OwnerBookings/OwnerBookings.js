@@ -37,7 +37,7 @@ class OwnerBookings extends Component{
                 <NavBar location="OwnerProperties" />
                 <UserToolbar tab="mybookings"/>
                 <div className="d-block w-100">
-                    <h2 className="mt-3 font-weight-bold">My Properties</h2>
+                    <h2 className="mt-3 font-weight-bold">Bookings for my properties</h2>
                     <div id="my_bookings" className="container">
                         {this.displayBookings()}
                     </div>

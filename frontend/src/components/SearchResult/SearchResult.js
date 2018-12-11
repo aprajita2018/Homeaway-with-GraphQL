@@ -8,44 +8,58 @@ class SearchResult extends Component{
         this.state = {
             id: this.props.propertyId,
             isLoading: false,
-            photoURL: null,
+            title: this.props.property.title,
+            type: this.props.property.type,
+            description: this.props.property.description,
+            price: this.props.property.price,
+            numSleep: this.props.property.numSleep,
+            numBed: this.props.property.numBed,
+            numBath: this.props.property.numBath,
+            minStay: this.props.property.minStay,
+            city: this.props.property.city,
+            owner_id: this.props.property.ownerDetails.id,
+            streetAddress: this.props.property.streetAddress,
+            state: this.props.property.state,
+            fromDate: this.props.property.fromDate,
+            toDate: this.props.property.toDate,
+            photoURL: this.props.property.photoURL,
         }
     }
 
-    componentDidMount(){
-        this.setState({
-            isLoading: true,
-        });
+    // componentDidMount(){
+    //     this.setState({
+    //         isLoading: true,
+    //     });
 
-        axios.get('/propertyDetails', {
-            params: {
-            id: this.state.id
-            }
-        })
-        .then((res) => {
-            console.log(res.data);
-            this.setState({
-                isLoading: false,
-            });
-            this.setState({
-                title: res.data.title,
-                type: res.data.type,
-                description: res.data.description,
-                price: res.data.price,
-                numSleep: res.data.numSleep,
-                numBed: res.data.numBed,
-                numBath: res.data.numBath,
-                minStay: res.data.minStay,
-                city: res.data.city,
-                owner_id: res.data.owner_id,
-                streetAddress: res.data.streetAddress,
-                state: res.data.state,
-                fromDate: res.data.fromDate,
-                toDate: res.data.toDate,
-                photoURL: res.data.photoURL,
-            });
-        })
-    }
+    //     axios.get('/propertyDetails', {
+    //         params: {
+    //         id: this.state.id
+    //         }
+    //     })
+    //     .then((res) => {
+    //         console.log(res.data);
+    //         this.setState({
+    //             isLoading: false,
+    //         });
+    //         this.setState({
+    //             title: res.data.title,
+    //             type: res.data.type,
+    //             description: res.data.description,
+    //             price: res.data.price,
+    //             numSleep: res.data.numSleep,
+    //             numBed: res.data.numBed,
+    //             numBath: res.data.numBath,
+    //             minStay: res.data.minStay,
+    //             city: res.data.city,
+    //             owner_id: res.data.owner_id,
+    //             streetAddress: res.data.streetAddress,
+    //             state: res.data.state,
+    //             fromDate: res.data.fromDate,
+    //             toDate: res.data.toDate,
+    //             photoURL: res.data.photoURL,
+    //         });
+    //     })
+    // }
 
     render(){
         return(

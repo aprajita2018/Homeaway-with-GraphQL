@@ -1,15 +1,9 @@
 import { gql } from 'apollo-boost';
 
 export const getSearchProperties = gql`
-    {
+    query getSearchProperties($city: String!, $fromDate: String!, $toDate: String!, $numSleep: Int!){
         searchProperties(city: $city, fromDate: $fromDate, toDate: $toDate, numSleep: $numSleep) {
             property_id
-            owner_id
-            toDate
-            fromDate
-            price,
-            numSleep,
-            minStay
         }
 
     }
@@ -88,5 +82,79 @@ export const getOwnerBookings = gql`
             }
         }
 
+    }
+`;
+
+export const getPropertyDetails = gql`
+    query getPropertyDetails($id: String!){
+        propertyDetails(id: $id){
+            id
+            type
+            title
+            description
+            owner_id
+            numSleep
+            numBath
+            numBed
+            minStay
+            city
+            state
+            price
+            streetAddress
+            fromDate
+            toDate
+            photoURL
+            bookings { 
+                id
+            }
+            ownerDeatils {
+                id
+                email
+                f_name
+                l_name
+                phone_num
+                aboutMe
+                city
+                state
+                language
+            }
+        }
+    }
+`;
+
+export const fetchPropertyDetailsByIDs = gql`
+    query fetchPropertiesByIDs($ids: [String]!){
+        fetchPropertyDetailsByIDs(ids: $ids) {
+            id
+            type
+            title
+            description
+            owner_id
+            numSleep
+            numBath
+            numBed
+            minStay
+            city
+            state
+            price
+            streetAddress
+            fromDate
+            toDate
+            photoURL
+            bookings { 
+                id
+            }
+            ownerDetails {
+                id
+                email
+                f_name
+                l_name
+                phone_num
+                aboutMe
+                city
+                state
+                language
+            }
+        }
     }
 `;
