@@ -12,7 +12,8 @@ const client = new ApolloClient({
   onError: ({ networkError, graphQLErrors }) => {
     console.log('graphQLErrors', graphQLErrors)
     console.log('networkError', networkError)
-  }
+  },
+  credentials: 'same-origin'
 });
 
 

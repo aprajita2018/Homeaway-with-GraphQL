@@ -5,7 +5,11 @@ import axios from 'axios';
 import * as qs from 'query-string';
 import cookie from 'react-cookies';
 
+import {getPropertyDetails} from '../../queries/queries';
+import { Query, graphql, withApollo } from 'react-apollo';
+
 class PropertyDetails extends Component{
+
     constructor(props){
         super(props);
         this.state = {
@@ -17,9 +21,23 @@ class PropertyDetails extends Component{
             toDate: "",
             priceTotal: "",
             photoURL: "",
+            ownerDetails: {}
         };
         this.calculateTotalPrice = this.calculateTotalPrice.bind(this);
         this.handleBookNow = this.handleBookNow.bind(this);
+    }
+
+    fetchPropertyDetails = async () => {
+        const {id} = this.state;
+        const result = await this.props.client.query({
+            query: getPropertyDetails,
+            variables: {id}
+        });
+        const propDetails = result.data.propertyDetails;
+        this.setState({
+            ...propDetails,
+            ownerDetails: propDetails.ownerDetails
+        });
     }
 
     componentDidMount () {
@@ -28,54 +46,59 @@ class PropertyDetails extends Component{
                 isLoggedIn: true,
             })
         }
-
-        axios.get('/propertyDetails', {
-            params: {
-            id: this.state.id
-            }
-        })
-            .then((res) => {
-                console.log(res.data);
-                this.setState({
-                    title: res.data.title,
-                    type: res.data.type,
-                    description: res.data.description,
-                    price: res.data.price,
-                    numSleep: res.data.numSleep,
-                    numBed: res.data.numBed,
-                    numBath: res.data.numBath,
-                    minStay: res.data.minStay,
-                    city: res.data.city,
-                    owner_id: res.data.owner_id,
-                    streetAddress: res.data.streetAddress,
-                    state: res.data.state,
-                    fromDate: res.data.fromDate,
-                    toDate: res.data.toDate,
-                    photoURL: res.data.photoURL,
-                });
-            })
-            .then( () => {
-                axios.get('/ownerDetails', {
-                    params: {
-                    id: this.state.owner_id
-                    }
-                })
-                    .then((res) => {
-                        console.log(res.data);
-                        this.setState({
-                            fname: res.data.f_name,
-                            lname: res.data.l_name,
-                            email: res.data.email,
-                            phone: res.data.phone_num,
-                            owner_city: res.data.city,
-                            owner_state: res.data.state,
-                            aboutMe: res.data.aboutMe,
-                            hometown: res.data.hometown,
-                            languages: res.data.languages,
-                            gender: res.data.gender,
-                            });
-                    });
-            });
+        this.fetchPropertyDetails();
+        // this.props.getPropertyDetails({
+        //     variables: {
+        //         id: this.state.id
+        //     }
+        // });
+        // axios.get('/propertyDetails', {
+        //     params: {
+        //     id: this.state.id
+        //     }
+        // })
+        //     .then((res) => {
+        //         console.log(res.data);
+        //         this.setState({
+        //             title: res.data.title,
+        //             type: res.data.type,
+        //             description: res.data.description,
+        //             price: res.data.price,
+        //             numSleep: res.data.numSleep,
+        //             numBed: res.data.numBed,
+        //             numBath: res.data.numBath,
+        //             minStay: res.data.minStay,
+        //             city: res.data.city,
+        //             owner_id: res.data.owner_id,
+        //             streetAddress: res.data.streetAddress,
+        //             state: res.data.state,
+        //             fromDate: res.data.fromDate,
+        //             toDate: res.data.toDate,
+        //             photoURL: res.data.photoURL,
+        //         });
+        //     })
+        //     .then( () => {
+        //         axios.get('/ownerDetails', {
+        //             params: {
+        //             id: this.state.owner_id
+        //             }
+        //         })
+        //             .then((res) => {
+        //                 console.log(res.data);
+        //                 this.setState({
+        //                     fname: res.data.f_name,
+        //                     lname: res.data.l_name,
+        //                     email: res.data.email,
+        //                     phone: res.data.phone_num,
+        //                     owner_city: res.data.city,
+        //                     owner_state: res.data.state,
+        //                     aboutMe: res.data.aboutMe,
+        //                     hometown: res.data.hometown,
+        //                     languages: res.data.languages,
+        //                     gender: res.data.gender,
+        //                     });
+        //             });
+        //     });
       }
 
     //handler for book now button  
@@ -156,19 +179,19 @@ class PropertyDetails extends Component{
                         <div className="col-md-8 flex-wrap flex-row">
                             <div className="card">
                                 <div id="carouselExampleIndicators" className="card-img-top carousel slide" data-ride="carousel">
-                                    <ol class="carousel-indicators">
+                                    <ol className="carousel-indicators">
                                         {carousel_indicators}
                                     </ol>
                                     <div className="carousel-inner">
                                         {image_carousel}
                                     </div>
-                                    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span class="sr-only">Previous</span>
+                                    <a className="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                                        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span className="sr-only">Previous</span>
                                     </a>
-                                    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span class="sr-only">Next</span>
+                                    <a className="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                                        <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span className="sr-only">Next</span>
                                     </a>
                                 </div>
                                 <div className="card-body">
@@ -217,10 +240,10 @@ class PropertyDetails extends Component{
                                         Property Manager:
                                     </div>
                                     <div className="col-10">
-                                        <i className="far fa-user" /> : {this.state.fname} {this.state.lname}<br />
-                                        <i className="far fa-comment-alt" /> : {this.state.aboutMe} <br />
-                                        <i className="far fa-envelope" /> : {this.state.email} <br />
-                                        <i className="fas fa-phone" /> : {this.state.phone}
+                                        <i className="far fa-user" /> : {this.state.ownerDetails.f_name} {this.state.ownerDetails.l_name}<br />
+                                        <i className="far fa-comment-alt" /> : {this.state.ownerDetails.aboutMe} <br />
+                                        <i className="far fa-envelope" /> : {this.state.ownerDetails.email} <br />
+                                        <i className="fas fa-phone" /> : {this.state.ownerDetails.phone_num}
                                     </div>
                                 </div>
                             </div>
@@ -228,7 +251,7 @@ class PropertyDetails extends Component{
                         <div className="col-md-4">
 
                             {/* Confirmed Booking Box */}
-                            <div className="w-100 h-100" style={{position: "absolute", 'z-index':'2024', display: this.state.isBooked? 'block': 'none'}}>
+                            <div className="w-100 h-100" style={{position: "absolute", 'zIndex':'2024', display: this.state.isBooked? 'block': 'none'}}>
                                 <div className="container border border-success m-5 p-3"> 
                                     <h3 className="font-weight-bold text-success text-center">Congratulations!!!</h3>
                                     <p className="text-info text-center mt-4"> Your booking has been confirmed. </p>                                    
@@ -237,7 +260,7 @@ class PropertyDetails extends Component{
                             </div>
 
                             {/* Booking Box */}
-                            <div className="w-100 h-100" style={{position: "absolute", 'z-index':'2024', display: this.state.isBooked? 'none': 'block'}}>
+                            <div className="w-100 h-100" style={{position: "absolute", 'zIndex':'2024', display: this.state.isBooked? 'none': 'block'}}>
                                 <div className="container border border-info float-right">
                                     <h3 className="font-weight-bold">${this.state.price}</h3>
                                     {/* <p className="text-subtitle">per night</p>
@@ -247,11 +270,11 @@ class PropertyDetails extends Component{
                                         <div className="row m-1">
                                             <input className="col-6" type="date" id="booking_from" name="fromDate" min={this.state.fromDate.substring(0,10)} max={this.state.toDate.substring(0,10)} onChange={this.calculateTotalPrice} required/>
                                         </div>
-                                        <div class="row m-1">     
+                                        <div className="row m-1">     
                                             <input className="col-6" type="date" id="booking_until" name="toDate" min={this.state.fromDate.substring(0,10)} max={this.state.toDate.substring(0,10)} onChange={this.calculateTotalPrice} required/>
                                             
                                         </div>
-                                        <div class="row m-1">
+                                        <div className="row m-1">
                                             <input className="col-12" type="text" name="numGuests" min="1" placeholder="Number of guests" required />
                                         </div>
                                         <br />
@@ -276,4 +299,4 @@ class PropertyDetails extends Component{
         );
     }
 }
-export default PropertyDetails;
+export default withApollo(PropertyDetails);

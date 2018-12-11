@@ -116,7 +116,7 @@ export const getOwnerProperties = gql`
 `;
 
 export const getPropertyDetails = gql`
-    query getPropertyDetails($id: String!){
+    query getPropertyDetails($id: ID!){
         propertyDetails(id: $id){
             id
             type
@@ -137,7 +137,7 @@ export const getPropertyDetails = gql`
             bookings { 
                 id
             }
-            ownerDeatils {
+            ownerDetails {
                 id
                 email
                 f_name
