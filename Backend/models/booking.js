@@ -24,7 +24,7 @@ module.exports = Bookings;
 
 //define create booking
 module.exports.createBooking = function(newBooking, callback){
-    console.log("****Inside function createBooking.****");
+    console.log("****Inside function createBooking.****" + JSON.stringify(newBooking));
     Bookings.create(newBooking,callback);
 };
 

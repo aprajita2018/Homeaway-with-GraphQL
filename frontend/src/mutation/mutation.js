@@ -10,6 +10,14 @@ const addUserMutation = gql`
     }
 `;
 
+const bookPropertyMutation = gql`
+    mutation BookProperty($property_id: String!, $owner_id: String!, $pricePerNight: String!, $fromDate: String!, $toDate: String!, $priceTotal: Int!){
+        bookProperty(property_id: $property_id, owner_id: $owner_id, pricePerNight: $pricePerNight, fromDate: $fromDate, toDate: $toDate, priceTotal: $priceTotal){
+            id
+        }
+    }
+`;
+
 const updateUserMutation = gql`
     mutation UpdateUserMutation($user_id: String, $f_name: String, $l_name: String, $gender: String, $phone_num: String, $hometown: String, $city: String, $state: String, $language: String, $aboutMe: String){
         updateUser(user_id: $user_id, f_name: $f_name, l_name: $l_name, gender: $gender, phone_num: $phone_num, hometown: $hometown, city: $city, state: $state, language: $language, aboutMe: $aboutMe){
@@ -27,4 +35,4 @@ const updateUserMutation = gql`
     }
 `;
 
-export {addUserMutation, updateUserMutation};
+export {addUserMutation, updateUserMutation, bookPropertyMutation};

@@ -272,7 +272,7 @@ const Mutation = new GraphQLObjectType({
                 user_id        :    { type: GraphQLString },
                 property_id    :    { type: GraphQLString },
                 owner_id       :    { type: GraphQLString },
-                pricePerNight  :    { type: GraphQLInt },
+                pricePerNight  :    { type: GraphQLString },
                 fromDate       :    { type: GraphQLString },
                 toDate         :    { type: GraphQLString },
                 priceTotal     :    { type: GraphQLInt }

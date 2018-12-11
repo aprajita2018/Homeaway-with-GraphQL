@@ -6,7 +6,8 @@ import * as qs from 'query-string';
 import cookie from 'react-cookies';
 
 import {getPropertyDetails} from '../../queries/queries';
-import { Query, graphql, withApollo } from 'react-apollo';
+import {bookPropertyMutation} from '../../mutation/mutation';
+import { compose, graphql, withApollo } from 'react-apollo';
 
 class PropertyDetails extends Component{
 
@@ -47,58 +48,6 @@ class PropertyDetails extends Component{
             })
         }
         this.fetchPropertyDetails();
-        // this.props.getPropertyDetails({
-        //     variables: {
-        //         id: this.state.id
-        //     }
-        // });
-        // axios.get('/propertyDetails', {
-        //     params: {
-        //     id: this.state.id
-        //     }
-        // })
-        //     .then((res) => {
-        //         console.log(res.data);
-        //         this.setState({
-        //             title: res.data.title,
-        //             type: res.data.type,
-        //             description: res.data.description,
-        //             price: res.data.price,
-        //             numSleep: res.data.numSleep,
-        //             numBed: res.data.numBed,
-        //             numBath: res.data.numBath,
-        //             minStay: res.data.minStay,
-        //             city: res.data.city,
-        //             owner_id: res.data.owner_id,
-        //             streetAddress: res.data.streetAddress,
-        //             state: res.data.state,
-        //             fromDate: res.data.fromDate,
-        //             toDate: res.data.toDate,
-        //             photoURL: res.data.photoURL,
-        //         });
-        //     })
-        //     .then( () => {
-        //         axios.get('/ownerDetails', {
-        //             params: {
-        //             id: this.state.owner_id
-        //             }
-        //         })
-        //             .then((res) => {
-        //                 console.log(res.data);
-        //                 this.setState({
-        //                     fname: res.data.f_name,
-        //                     lname: res.data.l_name,
-        //                     email: res.data.email,
-        //                     phone: res.data.phone_num,
-        //                     owner_city: res.data.city,
-        //                     owner_state: res.data.state,
-        //                     aboutMe: res.data.aboutMe,
-        //                     hometown: res.data.hometown,
-        //                     languages: res.data.languages,
-        //                     gender: res.data.gender,
-        //                     });
-        //             });
-        //     });
       }
 
     //handler for book now button  
@@ -107,37 +56,57 @@ class PropertyDetails extends Component{
             window.location= '/travellerLogin';
         }
 
-        axios.post('/bookNow', {
-            params: {
+        this.props.bookPropertyMutation({
+            variables: {
                 property_id: this.state.id,
-                owner_id : this.state.owner_id,
-                pricePerNight: this.state.price,
-                fromDate: document.getElementById('booking_from').value,
-                toDate: document.getElementById('booking_until').value,
+                owner_id: this.state.ownerDetails.id,
                 priceTotal: this.state.priceTotal,
+                pricePerNight: this.state.price,
+                fromDate: this.state.fromDate,
+                toDate: this.state.toDate
             }
-        })
-        .then((res) =>{
-            if(res.status === 200){
-                console.log("Successfully booked the property.");
-                this.setState({
-                    isBooked: true,
-                });
-                document.getElementById("success_text").innerHTML = "Successfully booking!";
-                document.getElementById("success_snackbar").style.setProperty('display', 'block'); 
-                setTimeout(() => {
-                    document.getElementById("success_snackbar").style.setProperty('display', 'none');
-                }, 2000);
-            }
-            else{                
-                console.log("Error in booking the property.");
-                document.getElementById("alert_text").innerHTML = "ERROR: Could not book the property.";
-                document.getElementById("alert_snackbar").style.setProperty('display', 'block');
-                setTimeout(() => {
-                    document.getElementById("alert_snackbar").style.setProperty('display', 'none');
-                }, 2000);
-            }
-        })
+        });
+        console.log("Successfully booked the property.");
+        this.setState({
+            isBooked: true,
+        });
+        document.getElementById("success_text").innerHTML = "Successfull booking!";
+        document.getElementById("success_snackbar").style.setProperty('display', 'block'); 
+        setTimeout(() => {
+            document.getElementById("success_snackbar").style.setProperty('display', 'none');
+        }, 2000);
+
+        // axios.post('/bookNow', {
+        //     params: {
+        //         property_id: this.state.id,
+        //         owner_id : this.state.owner_id,
+        //         pricePerNight: this.state.price,
+        //         fromDate: document.getElementById('booking_from').value,
+        //         toDate: document.getElementById('booking_until').value,
+        //         priceTotal: this.state.priceTotal,
+        //     }
+        // })
+        // .then((res) =>{
+        //     if(res.status === 200){
+        //         console.log("Successfully booked the property.");
+        //         this.setState({
+        //             isBooked: true,
+        //         });
+        //         document.getElementById("success_text").innerHTML = "Successfully booking!";
+        //         document.getElementById("success_snackbar").style.setProperty('display', 'block'); 
+        //         setTimeout(() => {
+        //             document.getElementById("success_snackbar").style.setProperty('display', 'none');
+        //         }, 2000);
+        //     }
+        //     else{                
+        //         console.log("Error in booking the property.");
+        //         document.getElementById("alert_text").innerHTML = "ERROR: Could not book the property.";
+        //         document.getElementById("alert_snackbar").style.setProperty('display', 'block');
+        //         setTimeout(() => {
+        //             document.getElementById("alert_snackbar").style.setProperty('display', 'none');
+        //         }, 2000);
+        //     }
+        // })
     }
 
     //function to calculate total price based on from & to dates
@@ -151,6 +120,8 @@ class PropertyDetails extends Component{
             var totalPrice =  ((d2-d1)/(1000*60*60*24)) *c;
             this.setState({
             priceTotal: totalPrice,
+            fromDate: a,
+            toDate: b,
         });
         }            
     }    
@@ -299,4 +270,7 @@ class PropertyDetails extends Component{
         );
     }
 }
-export default withApollo(PropertyDetails);
+export default compose(
+    withApollo,
+    graphql(bookPropertyMutation, {name: "bookPropertyMutation"})
+)(PropertyDetails);
